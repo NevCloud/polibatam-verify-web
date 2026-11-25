@@ -104,6 +104,12 @@ class Pendaftaran extends Model
         return $this->hasMany(Dokumen::class);
     }
 
+    /** @return HasMany<Tagihan, $this> */
+    public function tagihans(): HasMany
+    {
+        return $this->hasMany(Tagihan::class);
+    }
+
     /** @return HasOne<PesertaDidik, $this> */
     public function pesertaDidik(): HasOne
     {

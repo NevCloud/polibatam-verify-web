@@ -28,3 +28,6 @@ Thumbs.db
 /database/paket-db/sql/00_terisi.sql
 /database/paket-db/sql/07_terisi.sql
 /database/paket-db/recovery code.txt
+
+# P06: environment Postman berisi token Bearer asli
+/postman/*.postman_environment.json

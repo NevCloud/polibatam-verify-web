@@ -8,7 +8,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * PRD kontrak event: dipicu AjukanFormulir (P03). Pendengar: P05 menerbitkan tagihan formulir (FR-26).
- * STUB-BE(P05): belum ada pendengar; kartu "Tagihan Formulir" tampil "Belum terbit".
+ * Pendengar: App\Listeners\TerbitkanTagihanFormulir (P05).
  */
 class FormulirDiajukan implements ShouldDispatchAfterCommit
 {

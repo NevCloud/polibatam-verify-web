@@ -71,6 +71,14 @@ final class PenanganGalat
         });
     }
 
+    /** 403 dari Action dengan pesan Bahasa Indonesia sendiri (mis. login mobile role lain, AC-30.2); bukan pesan bawaan framework. */
+    private static function pesanSendiri(Throwable $e): bool
+    {
+        $asal = $e->getPrevious() ?? $e; // Laravel membungkus AuthorizationException menjadi AccessDeniedHttpException
+
+        return $asal instanceof AuthorizationException && ! in_array($asal->getMessage(), ['', 'This action is unauthorized.'], true);
+    }
+
     private static function konflik(Throwable $e): ?string
     {
         return match (true) {
@@ -97,7 +105,7 @@ final class PenanganGalat
         $badan = [
             'success' => false,
             // NFR-34/35: pesan baku Bahasa Indonesia, tanpa detail teknis; hanya konflik domain (409) membawa pesannya sendiri.
-            'message' => $konflik !== null ? $e->getMessage() : $pesan,
+            'message' => $konflik !== null || self::pesanSendiri($e) ? $e->getMessage() : $pesan,
             'code' => $konflik ?? $kode,
         ];
 

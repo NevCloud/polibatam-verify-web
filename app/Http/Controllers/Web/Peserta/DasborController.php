@@ -11,6 +11,7 @@ use App\Services\NikHasher;
 use App\Support\Ui\Format;
 use App\Support\Ui\PortalContext;
 use App\Support\Ui\TampilanPendaftaran;
+use App\Support\Ui\TampilanTagihan;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,6 +46,7 @@ class DasborController extends Controller
 
         return view('peserta.dasbor', $dasar + [
             'pendaftaran' => TampilanPendaftaran::ringkasan($p),
+            'tagihan' => ($t = $p->tagihans()->berlaku()->where('jenis', 'formulir')->first()) ? TampilanTagihan::baris($t) : null,
             'tracker' => TampilanPendaftaran::tracker($p),
             'banner' => TampilanPendaftaran::banner($p),
             'kartu' => [

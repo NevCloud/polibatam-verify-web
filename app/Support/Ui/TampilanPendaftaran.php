@@ -120,7 +120,7 @@ final class TampilanPendaftaran
             'perlu_revisi' => ['badge' => 'Perlu Revisi', 'teks' => 'Unggah ulang hanya dokumen yang ditolak. Dokumen Valid terkunci.',
                 'tombol' => 'Buka berkas & revisi', 'href' => route('pendaftaran.berkas', $p)],
             'masuk_kuota' => ['badge' => 'Verifikasi Pembayaran Formulir', 'teks' => 'Bayar sesuai nominal tagihan (termasuk kode unik), lalu unggah bukti. NPD terbit setelah pembayaran disahkan Admin Keuangan.',
-                'tombol' => 'Lihat tagihan formulir', 'href' => '#'], // STUB-FE(P05): rute HW-17/18
+                'tombol' => 'Lihat tagihan formulir', 'href' => ($t = $p->tagihans()->berlaku()->where('jenis', 'formulir')->first()) ? route('tagihan.show', $t) : route('tagihan.index')],
             'npd_terbit' => ['badge' => 'NPD Terbit', 'teks' => 'Pantau tagihan semester dan status keaktifan Anda dari dasbor.', 'tombol' => null, 'href' => null],
             default => ['badge' => 'Dibatalkan', 'teks' => 'Pendaftaran ini sudah berakhir. Bila tagihan sudah lunas, refund diproses lewat menu Refund. Anda dapat mendaftar lagi saat periode baru dibuka.', 'tombol' => null, 'href' => null],
         };

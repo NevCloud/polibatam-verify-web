@@ -44,6 +44,9 @@ class PendaftaranController extends Controller
         if ($aktif && ! $aktif->adalahDraf()) {
             return to_route('pendaftaran.formulir', $aktif); // BR-09: pilihan terkunci setelah Diajukan
         }
+        if (! $aktif && $user->masihPesertaDidik()) {
+            return to_route('dasbor')->with('info', PilihPeminatan::PESAN_PESERTA_DIDIK);
+        }
 
         $katalog = PeminatanPeriode::terbuka()->with('peminatan.track', 'periode')->get();
         $tracks = [];

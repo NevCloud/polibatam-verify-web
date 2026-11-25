@@ -1,0 +1,521 @@
+openapi: 3.0.3
+info:
+  title: 'Polibatam Verify API v1'
+  description: 'REST API v1 untuk aplikasi mobile Admin SILAU & Admin Keuangan (P06, FR-60). Tidak ada endpoint peserta maupun keputusan massal.'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://127.0.0.1:8000'
+tags:
+  -
+    name: Autentikasi
+    description: "\nLogin dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat."
+  -
+    name: Umum
+    description: "\nDasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12)."
+  -
+    name: 'Verifikasi Berkas (Admin SILAU)'
+    description: "\nFR-18–FR-21, FR-61, BR-13, BR-61, BR-64, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit \"mobile\".\nTidak ada endpoint keputusan massal; Fast Verify = keputusan satu per satu lewat endpoint yang sama (BR-74)."
+  -
+    name: 'Verifikasi Pembayaran (Admin Keuangan)'
+    description: "\nFR-31–FR-35, FR-61, BR-38, BR-39, BR-61, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit \"mobile\"."
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'Token diperoleh dari <code>POST /auth/two-factor</code> setelah login; berlaku 12 jam.'
+security:
+  -
+    default: []
+paths:
+  /api/v1/auth/login:
+    post:
+      summary: 'Login (tahap 1)'
+      operationId: logintahap1
+      description: 'Selalu mengembalikan `challenge_token` (2FA wajib untuk admin, K-33). Hanya Admin SILAU & Admin Keuangan; role lain 403.'
+      parameters: []
+      responses: {}
+      tags:
+        - Autentikasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Email akun admin.'
+                  example: silau@polibatam-verify.test
+                password:
+                  type: string
+                  description: 'Password akun.'
+                  example: '|]|{+-'
+                nama_perangkat:
+                  type: string
+                  description: 'Nama perangkat (satu token per perangkat).'
+                  example: 'Pixel 8 Bayu'
+              required:
+                - email
+                - password
+                - nama_perangkat
+      security: []
+  /api/v1/auth/two-factor:
+    post:
+      summary: 'Verifikasi kode TOTP (tahap 2)'
+      operationId: verifikasiKodeTOTPtahap2
+      description: 'Mengembalikan token Sanctum yang berlaku 12 jam. Gagal berturut-turut mengunci akun seperti di web (BR-03).'
+      parameters: []
+      responses: {}
+      tags:
+        - Autentikasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                challenge_token:
+                  type: string
+                  description: 'Token dari tahap 1 (berlaku 5 menit).'
+                  example: architecto
+                code:
+                  type: string
+                  description: 'Kode 6 digit dari aplikasi autentikator. Wajib bila `recovery_code` kosong.'
+                  example: '123456'
+                  nullable: true
+                recovery_code:
+                  type: string
+                  description: 'Recovery code sekali pakai.'
+                  example: architecto
+                  nullable: true
+              required:
+                - challenge_token
+      security: []
+  /api/v1/auth/logout:
+    post:
+      summary: Logout
+      operationId: logout
+      description: 'Mencabut token perangkat ini.'
+      parameters: []
+      responses: {}
+      tags:
+        - Autentikasi
+  /api/v1/me:
+    get:
+      summary: 'Profil & role'
+      operationId: profilRole
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Autentikasi
+  /api/v1/dasbor/ringkasan:
+    get:
+      summary: 'Ringkasan dasbor'
+      operationId: ringkasanDasbor
+      description: 'Admin SILAU: jumlah antrean berkas. Admin Keuangan: jumlah tagihan Menunggu Verifikasi dan yang siap diputuskan (lolos gerbang ganda).'
+      parameters: []
+      responses: {}
+      tags:
+        - Umum
+  /api/v1/notifikasi:
+    get:
+      summary: 'Daftar notifikasi'
+      operationId: daftarNotifikasi
+      description: ''
+      parameters:
+        -
+          in: query
+          name: page
+          description: Halaman.
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: Halaman.
+            example: 1
+        -
+          in: query
+          name: per_page
+          description: '1–100, bawaan 20.'
+          example: 20
+          required: false
+          schema:
+            type: integer
+            description: '1–100, bawaan 20.'
+            example: 20
+      responses: {}
+      tags:
+        - Umum
+  '/api/v1/notifikasi/{id}/dibaca':
+    patch:
+      summary: 'Tandai notifikasi dibaca'
+      operationId: tandaiNotifikasiDibaca
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Umum
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the notifikasi.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/berkas/{id}/tautan':
+    get:
+      summary: 'Tautan berkas bertanda tangan'
+      operationId: tautanBerkasBertandaTangan
+      description: 'Admin SILAU: `id` = versi dokumen pendaftar. Admin Keuangan: `id` = bukti pembayaran. Tautan berlaku 15 menit.'
+      parameters: []
+      responses: {}
+      tags:
+        - Umum
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'ID versi dokumen (SILAU) atau bukti pembayaran (Keuangan).'
+        example: 16
+        required: true
+        schema:
+          type: integer
+  /api/v1/verifikasi-berkas:
+    get:
+      summary: 'Antrean verifikasi berkas'
+      operationId: antreanVerifikasiBerkas
+      description: 'Pendaftaran berstatus Diajukan (tanpa Draf), urut pengajuan terlama.'
+      parameters:
+        -
+          in: query
+          name: periode
+          description: 'ID periode pendaftaran.'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'ID periode pendaftaran.'
+            example: 16
+        -
+          in: query
+          name: track
+          description: 'Kode track.'
+          example: TI
+          required: false
+          schema:
+            type: string
+            description: 'Kode track.'
+            example: TI
+        -
+          in: query
+          name: peminatan
+          description: 'ID peminatan.'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'ID peminatan.'
+            example: 16
+        -
+          in: query
+          name: jenis
+          description: '`baru` atau `revisi` (revisi masuk).'
+          example: revisi
+          required: false
+          schema:
+            type: string
+            description: '`baru` atau `revisi` (revisi masuk).'
+            example: revisi
+        -
+          in: query
+          name: page
+          description: ''
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: ''
+            example: 1
+        -
+          in: query
+          name: per_page
+          description: '1–100, bawaan 20.'
+          example: 20
+          required: false
+          schema:
+            type: integer
+            description: '1–100, bawaan 20.'
+            example: 20
+      responses: {}
+      tags:
+        - 'Verifikasi Berkas (Admin SILAU)'
+  '/api/v1/verifikasi-berkas/{pendaftaran_id}':
+    get:
+      summary: 'Detail verifikasi berkas'
+      operationId: detailVerifikasiBerkas
+      description: 'Biodata (NIK tersamar), dokumen + checklist per jenis, kuota minimum peminatan. `versi` tiap dokumen dikirim kembali saat memutuskan.'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Berkas (Admin SILAU)'
+    parameters:
+      -
+        in: path
+        name: pendaftaran_id
+        description: 'The ID of the pendaftaran.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/verifikasi-berkas/{pendaftaran_id}/dokumen/{dokumen_id}':
+    put:
+      summary: 'Keputusan per dokumen'
+      operationId: keputusanPerDokumen
+      description: 'Valid hanya bila semua kriteria checklist dicentang; Ditolak wajib kriteria tak terpenuhi dan/atau catatan (A-64). Versi usang → 409 `SUDAH_DIVERIFIKASI`.'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Berkas (Admin SILAU)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keputusan:
+                  type: string
+                  description: '`valid` atau `ditolak`.'
+                  example: valid
+                versi:
+                  type: string
+                  description: 'Nilai `versi` dokumen dari detail.'
+                  example: '2026-11-26 03:00:00.000000'
+                kriteria:
+                  type: array
+                  description: 'ID kriteria yang terpenuhi (dicentang).'
+                  example:
+                    - 16
+                  items:
+                    type: integer
+                catatan:
+                  type: string
+                  description: 'Catatan penolakan.'
+                  example: architecto
+                  nullable: true
+              required:
+                - keputusan
+                - versi
+    parameters:
+      -
+        in: path
+        name: pendaftaran_id
+        description: 'The ID of the pendaftaran.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dokumen_id
+        description: 'The ID of the dokumen.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/v1/verifikasi-berkas/{pendaftaran_id}/selesai':
+    post:
+      summary: 'Selesaikan verifikasi'
+      operationId: selesaikanVerifikasi
+      description: 'Semua dokumen harus sudah diputuskan → Perlu Revisi (ada Ditolak) atau Masuk Kuota (semua Valid, K-42).'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Berkas (Admin SILAU)'
+    parameters:
+      -
+        in: path
+        name: pendaftaran_id
+        description: 'The ID of the pendaftaran.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/verifikasi-pembayaran:
+    get:
+      summary: 'Antrean verifikasi pembayaran'
+      operationId: antreanVerifikasiPembayaran
+      description: 'Tagihan Menunggu Verifikasi, urut pengunggahan terlama. `siap=1` = hanya yang lolos gerbang ganda (Fast Verify, BR-74).'
+      parameters:
+        -
+          in: query
+          name: jenis
+          description: '`formulir` atau `semester`.'
+          example: formulir
+          required: false
+          schema:
+            type: string
+            description: '`formulir` atau `semester`.'
+            example: formulir
+        -
+          in: query
+          name: semester_ke
+          description: 'Semester ke-n (untuk jenis semester).'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'Semester ke-n (untuk jenis semester).'
+            example: 16
+        -
+          in: query
+          name: peminatan
+          description: 'ID peminatan.'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'ID peminatan.'
+            example: 16
+        -
+          in: query
+          name: periode
+          description: 'ID periode pendaftaran.'
+          example: 16
+          required: false
+          schema:
+            type: integer
+            description: 'ID periode pendaftaran.'
+            example: 16
+        -
+          in: query
+          name: siap
+          description: 'Hanya tagihan yang dapat ditandai Lunas.'
+          example: true
+          required: false
+          schema:
+            type: boolean
+            description: 'Hanya tagihan yang dapat ditandai Lunas.'
+            example: true
+        -
+          in: query
+          name: page
+          description: ''
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: ''
+            example: 1
+        -
+          in: query
+          name: per_page
+          description: '1–100, bawaan 20.'
+          example: 20
+          required: false
+          schema:
+            type: integer
+            description: '1–100, bawaan 20.'
+            example: 20
+      responses: {}
+      tags:
+        - 'Verifikasi Pembayaran (Admin Keuangan)'
+  '/api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}':
+    get:
+      summary: 'Detail verifikasi pembayaran'
+      operationId: detailVerifikasiPembayaran
+      description: 'Nominal + kode unik, pemilik, bukti & data pengiriman, status gerbang ganda. `versi` dikirim kembali saat memutuskan.'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Pembayaran (Admin Keuangan)'
+    parameters:
+      -
+        in: path
+        name: tagihan_kode_referensi
+        description: ''
+        example: TG-UJI-0001
+        required: true
+        schema:
+          type: string
+  '/api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/lunas':
+    post:
+      summary: 'Tandai Lunas'
+      operationId: tandaiLunas
+      description: 'Formulir → NPD terbit + tagihan Semester 1; semester → peserta Aktif. Belum lolos gerbang ganda → 409; versi usang → 409 `SUDAH_DIVERIFIKASI`.'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Pembayaran (Admin Keuangan)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                versi:
+                  type: string
+                  description: 'Nilai `versi` dari detail.'
+                  example: '2026-11-26 03:00:00.000000'
+              required:
+                - versi
+    parameters:
+      -
+        in: path
+        name: tagihan_kode_referensi
+        description: ''
+        example: TG-UJI-0001
+        required: true
+        schema:
+          type: string
+  '/api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/tolak':
+    post:
+      summary: 'Tolak pembayaran'
+      operationId: tolakPembayaran
+      description: 'Wajib alasan baku dan/atau catatan (BR-38, A-64). Peserta dapat mengunggah ulang bukti.'
+      parameters: []
+      responses: {}
+      tags:
+        - 'Verifikasi Pembayaran (Admin Keuangan)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                versi:
+                  type: string
+                  description: 'Nilai `versi` dari detail.'
+                  example: '2026-11-26 03:00:00.000000'
+                alasan:
+                  type: array
+                  description: 'Kunci alasan baku: mutasi_tidak_ditemukan, nominal_tidak_sesuai, bukti_tidak_terbaca.'
+                  example:
+                    - architecto
+                  items:
+                    type: string
+                catatan:
+                  type: string
+                  description: 'Catatan penolakan.'
+                  example: architecto
+                  nullable: true
+              required:
+                - versi
+    parameters:
+      -
+        in: path
+        name: tagihan_kode_referensi
+        description: ''
+        example: TG-UJI-0001
+        required: true
+        schema:
+          type: string

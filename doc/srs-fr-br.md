@@ -76,7 +76,7 @@ Disusun berdasarkan *User Stories* (US-01 s.d. US-32) dan *Keputusan Klarifikasi
 | BR-38 | Penolakan pembayaran oleh Admin Keuangan wajib disertai alasan. | US-13 |
 | BR-39 | **Gerbang ganda:** tagihan formulir hanya dapat dinyatakan Lunas jika pendaftarannya berstatus Masuk Kuota, yang berarti seluruh berkas sudah Valid. | K-01, PP-09 |
 | BR-40 | Status Lunas bersifat final. Koreksi hanya dapat dilakukan Super Admin dengan alasan wajib dan tercatat di *audit log*. | A-06 |
-| BR-41 | NPD terbit otomatis saat tagihan formulir dinyatakan Lunas. NPD unik secara global dan tidak dapat diubah. Format sementara (*dummy*) hingga Polibatam menetapkan format resmi: `MC-{TAHUN}-{KODE_PEMINATAN}-{NO_URUT_4_DIGIT}`, contoh `MC-2026-AKT-0001`. Format harus dapat dikonfigurasi. | K-08, K-23, US-12 |
+| BR-41 | NPD terbit otomatis saat tagihan formulir dinyatakan Lunas. NPD unik secara global dan tidak dapat diubah. Format sementara (*dummy*) hingga Polibatam menetapkan format resmi: `MC-{KODE_PEMINATAN}-{TAHUN}-{NO_URUT_4_DIGIT}`, contoh `MC-TRPL-2026-0001` (disetujui 26-11-2026, sama dengan pengaturan `format_npd`). Format harus dapat dikonfigurasi. | K-08, K-23, US-12 |
  
 ### 1.6 Status Peserta & Rollover
  
@@ -476,6 +476,6 @@ Seluruh *user story* US-01 s.d. US-32 tercakup oleh minimal satu FR. FR-67 dan F
 | A-59 | File hasil ekspor dan tautan unduhannya berlaku 24 jam, lalu file dihapus otomatis. | BR-67, FR-64 | Disetujui (K-38) |
 | A-60 | Arsip periode dibuat otomatis saat periode pendaftaran ditutup dan disimpan permanen, dikecualikan dari retensi sementara 5 tahun (K-26). | BR-69, FR-65, FR-66 | Disetujui (K-38) |
 | A-61 | `[ASUMSI]` Arsip periode berformat Excel (.xlsx) saja, berisi kondisi status per waktu penutupan; perubahan status setelah penutupan (mis. NPD terbit, pembatalan peminatan) tidak mengubah arsip dan tetap dapat dilihat melalui Data Pendaftaran. | BR-69, FR-65 | Menunggu konfirmasi |
-| A-62 | `[ASUMSI]` Rekening institusi dipisah per jenis tagihan (formulir, semester) dengan satu rekening aktif per jenis; satu rekening boleh aktif untuk kedua jenis sekaligus. Nomor rekening institusi bukan data pribadi sehingga tidak dienkripsi dan ditampilkan lengkap pada instruksi transfer. | BR-70, BR-71, FR-67 | Menunggu konfirmasi |
+| A-62 | `[ASUMSI]` Rekening institusi dipisah per jenis tagihan (formulir, semester) dengan satu rekening aktif per jenis; satu rekening boleh aktif untuk kedua jenis sekaligus. Nomor rekening institusi bukan data pribadi sehingga tidak dienkripsi dan ditampilkan lengkap pada instruksi transfer. | BR-70, BR-71, FR-67 | Disetujui (26-11-2026) |
 | A-63 | `[ASUMSI]` Kartu pendaftar dibangkitkan saat diunduh (bukan disimpan), memakai status terkini, dan tidak memuat QR/kode verifikasi. | BR-73, FR-68 | Menunggu konfirmasi |
 | A-64 | `[ASUMSI]` Alasan penolakan di mobile dapat dibentuk dari kriteria *checklist* yang tidak terpenuhi (berkas) atau daftar alasan baku — mutasi tidak ditemukan, nominal tidak sesuai, bukti tidak terbaca (pembayaran) — ditambah catatan bebas; minimal salah satu wajib diisi. | BR-13, BR-38, BR-74 | Disetujui (26-11-2026) |

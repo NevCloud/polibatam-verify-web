@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Pendaftaran\AjukanFormulir;
 use App\Actions\Pendaftaran\PilihPeminatan;
 use App\Actions\Pendaftaran\SimpanDraf;
 use App\Actions\Pendaftaran\UnggahDokumen;
@@ -7,6 +8,7 @@ use App\Models\Peminatan;
 use App\Models\PeminatanPeriode;
 use App\Models\Pendaftaran;
 use App\Models\PeriodePendaftaran;
+use App\Models\RekeningInstitusi;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -105,4 +107,62 @@ function drafLengkap(User $user, PeminatanPeriode $pp): Pendaftaran
     }
 
     return $p->fresh();
+}
+
+/** P05: rekening institusi aktif untuk jenis tagihan (BR-70). */
+function rekeningAktif(string $jenis = 'formulir', string $bank = 'Bank Negara Indonesia (BNI)', string $nomor = '0123456789'): RekeningInstitusi
+{
+    $pembuat = User::role('admin_keuangan')->first() ?? buatPengguna('admin_keuangan');
+
+    return RekeningInstitusi::create([
+        'jenis_tagihan' => $jenis, 'nama_bank' => $bank, 'nomor_rekening' => $nomor, 'atas_nama' => 'Politeknik Negeri Batam',
+        'status' => 'aktif', 'dibuat_oleh' => $pembuat->id,
+    ]);
+}
+
+/** P05: tarif semester ke-n berlaku untuk peminatan (BR-25). */
+function tarifSemester(int $peminatanId, int $semesterKe = 1, int $nominal = 6500000): void
+{
+    $pembuat = User::role('admin_track')->first() ?? buatPengguna('admin_track');
+    DB::table('tarifs')->insert([
+        'peminatan_id' => $peminatanId, 'jenis' => 'semester', 'semester_ke' => $semesterKe, 'nominal' => $nominal,
+        'tanggal_efektif' => now()->subYear()->toDateString(), 'dibuat_oleh' => $pembuat->id, 'created_at' => now(), 'updated_at' => now(),
+    ]);
+}
+
+/** P05: pendaftaran Diajukan (tagihan formulir terbit lewat FormulirDiajukan) lalu opsional Masuk Kuota. */
+function pendaftaranBertagihan(PeminatanPeriode $pp, bool $masukKuota = true): Pendaftaran
+{
+    $p = drafLengkap(buatPengguna('peserta'), $pp);
+    app(AjukanFormulir::class)($p);
+    if ($masukKuota) {
+        DB::table('pendaftarans')->where('id', $p->id)->update(['status' => 'masuk_kuota', 'waktu_masuk_kuota' => now()]);
+    }
+
+    return $p->fresh();
+}
+
+/** P05: data pengiriman sah untuk unggah bukti (BR-72). */
+function dataPengiriman(int $nominal): array
+{
+    return ['tanggal_transfer' => now()->toDateString(), 'nominal_transfer' => (string) $nominal, 'bank_pengirim' => 'Bank BNI', 'nama_pengirim' => 'Atma Fauzilla'];
+}
+
+/** P06: login dua tahap lewat API (password → challenge → TOTP), mengembalikan token Bearer. Password factory = "password". */
+function masukApi(User $user, string $perangkat = 'Pixel Uji'): string
+{
+    $rahasia = $user->two_factor_secret ? decrypt($user->two_factor_secret) : pasang2fa($user);
+    $tantangan = test()->postJson('/api/v1/auth/login', ['email' => $user->email, 'password' => 'password', 'nama_perangkat' => $perangkat])
+        ->assertOk()->json('data.challenge_token');
+
+    return test()->postJson('/api/v1/auth/two-factor', ['challenge_token' => $tantangan, 'code' => kodeTotp($rahasia)])
+        ->assertOk()->json('data.token');
+}
+
+/** P06: header Bearer. Guard Sanctum di-reset karena dalam satu tes ia menyimpan pengguna dari permintaan sebelumnya. */
+function bearer(string $token): array
+{
+    app('auth')->forgetGuards();
+
+    return ['Authorization' => "Bearer {$token}"];
 }

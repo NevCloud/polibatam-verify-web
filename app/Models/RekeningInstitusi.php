@@ -9,6 +9,11 @@ use Spatie\ModelStates\HasStates;
 /**
  * Tabel `rekening_institusis` (ERD). Satu Aktif per jenis tagihan dijaga UNIQUE `kunci_aktif` (BR-70).
  *
+ * @property int $id
+ * @property string $jenis_tagihan formulir / semester
+ * @property string $nama_bank
+ * @property string $nomor_rekening
+ * @property string $atas_nama
  * @property StatusRekeningInstitusi $status
  */
 class RekeningInstitusi extends Model

@@ -16,4 +16,14 @@ class Notifier
         $penerima->notifyNow(new Pemberitahuan('database', $jenis, $judul, $isi, $url));
         $penerima->notify(new Pemberitahuan('mail', $jenis, $judul, $isi, $url));
     }
+
+    /**
+     * Peringatan ke semua akun aktif dengan salah satu role (mis. BR-34, BR-71: tarif/rekening belum ada).
+     *
+     * @param  list<string>  $role
+     */
+    public function kirimKePeran(array $role, string $jenis, string $judul, string $isi, ?string $url = null): void
+    {
+        User::role($role)->where('is_active', true)->get()->each(fn (User $u) => $this->kirim($u, $jenis, $judul, $isi, $url));
+    }
 }

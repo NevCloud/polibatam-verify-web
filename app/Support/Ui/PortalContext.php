@@ -102,6 +102,10 @@ final class PortalContext
             'Profil' => 'akun.profil',
             'Kelola User' => 'admin.akun.index',
             'Verifikasi Berkas' => 'admin.verifikasi-berkas.index',
+            'Verifikasi Pembayaran' => 'admin.verifikasi-pembayaran.index',
+            'Rekap & Ekspor' => 'admin.rekap',
+            'Rekening Institusi' => 'admin.rekening.index',
+            'Tagihan' => $admin ? 'admin.tagihan.index' : 'tagihan.index',
             'Formulir' => 'pendaftaran.saya',
             'Status' => 'status',
             'Notifikasi' => $admin ? null : 'notifikasi', // STUB-FE(P12): notifikasi admin

@@ -494,7 +494,7 @@ Setiap paket memuat FE dan BE yang saling terhubung. **Gantt** menunjukkan tugas
 ### P05 — Tagihan & Pembayaran
 
 **FR:** FR-26–38, FR-57, FR-67 · **BR:** BR-25–41, BR-70–72 (efek BR-06, BR-42) · **NFR:** NFR-07, 19 (rekap), 29, 39 · **US:** US-06, US-12–17.
-**Asumsi yang harus dikonfirmasi:** **A-62** (rekening institusi dipisah per jenis tagihan, satu aktif per jenis, nomor tidak dienkripsi); format NPD masih *dummy* (`MC-{TAHUN}-{KODE_PEMINATAN}-{NO_URUT_4_DIGIT}`) dan harus dapat dikonfigurasi (BR-41).
+**Asumsi:** **A-62 disetujui 26-11-2026** (rekening institusi per jenis tagihan, satu aktif per jenis, nomor tidak dienkripsi). Format NPD awal **`MC-{KODE_PEMINATAN}-{TAHUN}-{URUT4}`** (disetujui 26-11-2026, sama dengan seed 04 `format_npd`), dapat dikonfigurasi (BR-41).
 
 | HW | Halaman | Rute | View |
 |---|---|---|---|

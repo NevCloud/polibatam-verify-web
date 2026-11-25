@@ -1,5 +1,5 @@
 {{-- HW-13 · Dasbor peserta (FR-15, FR-53, FR-68). Figma 1562:8886 (Draf). Data: DasborController::index (kunci = fixture hw-13).
-     Tanpa pendaftaran: `pendaftaran` null + `periodeBuka`. Tagihan formulir STUB-BE(P05): selalu "Belum terbit". --}}
+     Tanpa pendaftaran: `pendaftaran` null + `periodeBuka`. `tagihan` = tagihan formulir (TampilanTagihan::baris) atau null bila belum terbit. --}}
 @extends('layouts.portal')
 @section('judul', 'Dashboard')
 @section('konten')
@@ -8,6 +8,9 @@
 
     @if (session('status'))
         <x-pv.alert nada="success" :judul="session('status')" class="mb-5" />
+    @endif
+    @if (session('info'))
+        <x-pv.alert nada="info" :judul="session('info')" class="mb-5" />
     @endif
 
     @if (! $pendaftaran)
@@ -45,10 +48,11 @@
                 ['ikon' => 'layers-tumpuk', 'judul' => 'Berkas', 'nada' => $berkasLengkap ? 'success' : 'error', 'badge' => $berkasLengkap ? 'Lengkap' : 'Belum lengkap',
                     'teks' => $kartu['berkas_terunggah'].' dari '.$kartu['berkas_total'].' berkas wajib diunggah', 'persen' => intdiv(100 * $kartu['berkas_terunggah'], $kartu['berkas_total']),
                     'tautan' => $pendaftaran['draf'] ? 'Buka tab Berkas' : 'Lihat berkas', 'href' => $tautan['berkas']],
-                ['ikon' => 'card', 'judul' => 'Tagihan Formulir', 'nada' => 'neutral', 'badge' => 'Belum terbit',
-                    'teks' => $pendaftaran['draf'] ? 'Terbit setelah formulir diajukan' : 'Penerbitan tagihan sedang disiapkan', 'persen' => 0,
-                    'tautan' => 'Lihat tagihan', 'href' => '#'],
-            ] as $k){{-- STUB-FE(P05): tautan tagihan ke HW-17 --}}
+                ['ikon' => 'card', 'judul' => 'Tagihan Formulir', 'nada' => \App\Support\Ui\StatusBadge::nada($tagihan['status'] ?? 'Belum terbit'), 'badge' => $tagihan['status'] ?? 'Belum terbit',
+                    'teks' => $tagihan ? $tagihan['nominal'].' · '.$tagihan['kode'] : ($pendaftaran['draf'] ? 'Terbit setelah formulir diajukan' : 'Penerbitan tagihan sedang disiapkan'),
+                    'persen' => ($tagihan['status'] ?? '') === 'Lunas' ? 100 : 0,
+                    'tautan' => $tagihan ? 'Lihat tagihan' : 'Daftar tagihan', 'href' => $tagihan['href'] ?? route('tagihan.index')],
+            ] as $k)
                 <x-pv.panel class="gap-4">
                     <div class="flex items-center justify-between">
                         <x-pv.ikon :nama="$k['ikon']" class="text-link" />
@@ -94,8 +98,13 @@
 
             <div class="flex min-w-0 flex-col gap-5">
                 <x-pv.panel judul="Ringkasan tagihan">
-                    <x-pv.badge-status status="Belum terbit" class="self-start" />
-                    <p class="text-compact leading-relaxed text-muted">Tagihan formulir terbit setelah formulir diajukan. Tagihan Semester 1 terbit setelah NPD terbit.</p>
+                    <x-pv.badge-status :status="$tagihan['status'] ?? 'Belum terbit'" class="self-start" />
+                    @if ($tagihan)
+                        <x-pv.daftar-info :baris="['Kode referensi' => $tagihan['kode'], 'Nominal' => $tagihan['nominal'], 'Batas pelunasan' => $tagihan['jatuh_tempo']]" />
+                        <x-pv.button variant="secondary" :href="$tagihan['href']" class="w-full">{{ $tagihan['bisa_bayar'] ? 'Bayar & unggah bukti' : 'Lihat pembayaran' }}</x-pv.button>
+                    @else
+                        <p class="text-compact leading-relaxed text-muted">Tagihan formulir terbit setelah formulir diajukan. Tagihan Semester 1 terbit setelah NPD terbit.</p>
+                    @endif
                 </x-pv.panel>
                 @include('peserta.partials.aktivitas', ['notifikasi' => $notifikasi])
             </div>

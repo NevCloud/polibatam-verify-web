@@ -3,12 +3,17 @@
 use App\Http\Controllers\Web\Akun\ProfilController;
 use App\Http\Controllers\Web\Auth\AktivasiController;
 use App\Http\Controllers\Web\Auth\TantanganDuaFaktorController;
+use App\Http\Controllers\Web\Keuangan\RekapController;
+use App\Http\Controllers\Web\Keuangan\RekeningController;
+use App\Http\Controllers\Web\Keuangan\VerifikasiPembayaranController;
 use App\Http\Controllers\Web\Peserta\BerkasController;
 use App\Http\Controllers\Web\Peserta\DasborController;
 use App\Http\Controllers\Web\Peserta\NotifikasiController;
 use App\Http\Controllers\Web\Peserta\PendaftaranController;
+use App\Http\Controllers\Web\Peserta\TagihanController as PesertaTagihanController;
 use App\Http\Controllers\Web\Silau\VerifikasiBerkasController;
 use App\Http\Controllers\Web\SuperAdmin\AkunController;
+use App\Http\Controllers\Web\SuperAdmin\TagihanController as SuperAdminTagihanController;
 use App\Models\Dokumen;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -67,6 +72,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi'); // HW-20
         Route::post('/notifikasi/baca', [NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
         Route::get('/notifikasi/{id}', [NotifikasiController::class, 'buka'])->whereUuid('id')->name('notifikasi.buka');
+
+        // HW-17/18: tagihan & unggah bukti (FR-29, FR-37)
+        Route::get('/tagihan', [PesertaTagihanController::class, 'index'])->name('tagihan.index');
+        Route::get('/tagihan/{tagihan}', [PesertaTagihanController::class, 'show'])->where('tagihan', '[A-Z0-9-]+')->name('tagihan.show');
+        Route::post('/tagihan/{tagihan}/bukti', [PesertaTagihanController::class, 'unggah'])->where('tagihan', '[A-Z0-9-]+')->name('tagihan.unggah');
+        Route::get('/tagihan/{tagihan}/bukti/{bukti}', [PesertaTagihanController::class, 'bukti'])->middleware('signed')
+            ->where('tagihan', '[A-Z0-9-]+')->whereNumber('bukti')->name('tagihan.bukti');
     });
 
     // Portal admin
@@ -80,6 +92,33 @@ Route::middleware('auth')->group(function () {
             Route::post('/{pendaftaran}', [VerifikasiBerkasController::class, 'simpan'])->where('pendaftaran', 'PV-\d{4}-\d{6}')->name('simpan');
             Route::get('/{pendaftaran}/berkas/{versi}', [VerifikasiBerkasController::class, 'lihat'])->middleware('signed')
                 ->where('pendaftaran', 'PV-\d{4}-\d{6}')->whereNumber('versi')->name('berkas');
+        });
+
+        // HW-28/29, HW-32, HW-56: keuangan (Admin Keuangan & Super Admin; FR-31–38, FR-67)
+        Route::middleware('role:admin_keuangan|super_admin')->group(function () {
+            Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran.index');
+            Route::get('/verifikasi-pembayaran/{tagihan}', [VerifikasiPembayaranController::class, 'show'])->where('tagihan', '[A-Z0-9-]+')->name('verifikasi-pembayaran.show');
+            Route::post('/verifikasi-pembayaran/{tagihan}', [VerifikasiPembayaranController::class, 'putuskan'])->where('tagihan', '[A-Z0-9-]+')->name('verifikasi-pembayaran.putuskan');
+            Route::get('/verifikasi-pembayaran/{tagihan}/bukti/{bukti}', [VerifikasiPembayaranController::class, 'bukti'])->middleware('signed')
+                ->where('tagihan', '[A-Z0-9-]+')->whereNumber('bukti')->name('verifikasi-pembayaran.bukti');
+
+            Route::get('/rekap', [RekapController::class, 'index'])->name('rekap');
+            Route::get('/rekap/excel', [RekapController::class, 'excel'])->name('rekap.excel');
+            Route::get('/rekap/pdf', [RekapController::class, 'pdf'])->name('rekap.pdf');
+
+            Route::get('/rekening', [RekeningController::class, 'index'])->name('rekening.index');
+            Route::post('/rekening', [RekeningController::class, 'store'])->name('rekening.store');
+            Route::put('/rekening/{rekening}', [RekeningController::class, 'update'])->whereNumber('rekening')->name('rekening.update');
+            Route::put('/rekening/{rekening}/status', [RekeningController::class, 'status'])->whereNumber('rekening')->name('rekening.status');
+        });
+
+        // HW-42/43: tagihan tanpa jatuh tempo & koreksi (Super Admin; FR-36, FR-57)
+        Route::middleware('role:super_admin')->prefix('tagihan')->name('tagihan.')->group(function () {
+            Route::get('/', [SuperAdminTagihanController::class, 'index'])->name('index');
+            Route::get('/tanpa-jatuh-tempo', [SuperAdminTagihanController::class, 'tanpaJatuhTempo'])->name('tanpa-jatuh-tempo');
+            Route::post('/tanpa-jatuh-tempo', [SuperAdminTagihanController::class, 'tetapkanJatuhTempo'])->name('tanpa-jatuh-tempo.simpan');
+            Route::get('/{tagihan}', [SuperAdminTagihanController::class, 'show'])->where('tagihan', '[A-Z0-9-]+')->name('show');
+            Route::post('/{tagihan}/koreksi', [SuperAdminTagihanController::class, 'koreksi'])->where('tagihan', '[A-Z0-9-]+')->name('koreksi');
         });
 
         // HW-44: akun & role admin (Super Admin saja)

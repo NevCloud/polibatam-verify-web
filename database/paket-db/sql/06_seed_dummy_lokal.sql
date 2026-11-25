@@ -121,6 +121,12 @@ UPDATE dokumens SET versi_aktif_id = id WHERE id IN (1, 2, 3);
 INSERT INTO peserta_didiks (id, user_id, pendaftaran_id, npd, semester_berjalan, durasi_semester, status, npd_terbit_pada, created_at, updated_at)
 VALUES (1, 13, 46, 'MC-TRPL-2026-0001', 1, 5, 'belum_aktif', @now - INTERVAL 6 DAY, @now, @now);
 
+-- 6b. Rekening institusi (P05, A-62): satu aktif per jenis tagihan; dibuat Admin Keuangan (id 3)
+INSERT INTO rekening_institusis (jenis_tagihan, nama_bank, nomor_rekening, atas_nama, status, dibuat_oleh, created_at, updated_at) VALUES
+  ('formulir', 'Bank Negara Indonesia (BNI)', '0123456789',     'Politeknik Negeri Batam', 'aktif',    3, @now, @now),
+  ('semester', 'Bank Rakyat Indonesia (BRI)', '009801000123304', 'Politeknik Negeri Batam', 'aktif',    3, @now, @now),
+  ('formulir', 'Bank Mandiri',                '1080012345678',  'Politeknik Negeri Batam', 'nonaktif', 3, @now, @now);
+
 -- 7. Tagihan -------------------------------------------------------------------
 SET @tarif_form_trpl = (SELECT t.id FROM tarifs t JOIN peminatans p ON p.id = t.peminatan_id
                         WHERE p.kode = 'TRPL' AND t.jenis = 'formulir' LIMIT 1);

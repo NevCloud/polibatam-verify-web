@@ -11,10 +11,10 @@ Status: `Rencana` → `Dikerjakan` → `Menunggu Uji` → `Perbaikan` → `Diset
 | P00 | Fondasi proyek & UI | Disetujui | Skema, seed, GRANT, Telescope lokal, halaman sistem & komponen FE-0 dari Figma. Sisa: 5 komponen tanpa sumber Figma (dibuat bersama halamannya) |
 | P01 | Layanan inti | Disetujui | AuditLogger + hash chain, NikHasher, CekVersiData (409), 7 state machine, Notifier, penanganan galat, penyamaran log; tabel `rekening_institusis` (T-16) |
 | P02 | Akun & akses | Disetujui | Registrasi, verifikasi email, login + kunci akun, 2FA TOTP wajib admin (tantangan + pendaftaran), reset password, aktivasi admin 3 langkah, profil & sesi, kelola akun admin (BR-05), sesi tidak aktif 30/60 menit, rate limit 10/menit. Dasbor HW-13/HW-21 masih stub (P03/P12) |
-| P03 | Pendaftaran | Disetujui | Pilih peminatan (Draf + nomor PV-{TAHUN}-{6 digit}, FOR UPDATE), formulir 3 tab (NIK terenkripsi + hash), unggah berkas (magic bytes, ≤ 2 MB, disk privat, URL bertanda tangan 15 menit, progres), ajukan (BR-07/08/09, event FormulirDiajukan), revisi dokumen Ditolak, dasbor + status & riwayat, kartu pendaftar PDF (A-63), notifikasi in-app. STUB-BE(P05): tagihan formulir "Belum terbit" |
-| P04 | Verifikasi berkas & kuota | Menunggu Uji | Antrean (urut pengajuan, filter, cari NIK via hash, "Revisi masuk"), detail + document viewer, keputusan per dokumen dengan checklist (A-64) dalam satu form, Selesaikan → Perlu Revisi / Masuk Kuota (K-42, tanpa kuota maksimum), 409 optimistic locking + dialog, `pendaftaran:batalkan-kedaluwarsa` & `periode:tutup` (idempoten, terjadwal), skema 01c (hapus kuota maks) |
-| P05 | Tagihan & pembayaran | Rencana |  |
-| P06 | REST API v1 | Rencana |  |
+| P03 | Pendaftaran | Disetujui | Pilih peminatan (Draf + nomor PV-{TAHUN}-{6 digit}, FOR UPDATE), formulir 3 tab (NIK terenkripsi + hash), unggah berkas (magic bytes, ≤ 2 MB, disk privat, URL bertanda tangan 15 menit, progres), ajukan (BR-07/08/09, event FormulirDiajukan), revisi dokumen Ditolak, dasbor + status & riwayat, kartu pendaftar PDF (A-63), notifikasi in-app. Tagihan formulir terhubung di P05 |
+| P04 | Verifikasi berkas & kuota | Disetujui | Antrean (urut pengajuan, filter, cari NIK via hash, "Revisi masuk"), detail + document viewer, keputusan per dokumen dengan checklist (A-64) dalam satu form, Selesaikan → Perlu Revisi / Masuk Kuota (K-42, tanpa kuota maksimum), 409 optimistic locking + dialog, `pendaftaran:batalkan-kedaluwarsa` & `periode:tutup` (idempoten, terjadwal), skema 01c (hapus kuota maks) |
+| P05 | Tagihan & pembayaran | Disetujui | Tagihan formulir otomatis saat diajukan (kode referensi TG-{TAHUN}-{6 digit}, kode unik, snapshot tarif & rekening), unggah bukti + data pengiriman (hash unik, selisih = peringatan), verifikasi Lunas/Tolak (gerbang Masuk Kuota, alasan baku, 409), NPD atomik + tagihan Semester 1, koreksi Lunas (SA), tanpa jatuh tempo (HW-42 + perintah harian 07.00 WIB), rekening institusi, rekap + ekspor Excel/PDF (sinkron), skema 01d |
+| P06 | REST API v1 | Menunggu Uji | 16 endpoint `/api/v1` (Arsitektur §6.4): login dua tahap (password → `challenge_token` → TOTP → token Sanctum per perangkat 12 jam), logout, `/me`, dasbor, notifikasi, tautan berkas bertanda tangan 15 menit, verifikasi berkas (antrean, detail, keputusan per dokumen, selesai) & pembayaran (antrean + `siap=1` Fast Verify, detail, lunas, tolak). Hanya Admin SILAU/Keuangan, role silang 403, 409 `SUDAH_DIVERIFIKASI`, 429 login, kanal audit `mobile`. Scribe → `postman/` (HTML, collection, OpenAPI) + koleksi Newman `postman/uji-p06.postman_collection.json` |
 | P07 | Data master, tarif, kuota | Rencana |  |
 | P08 | Publik & CMS | Rencana |  |
 | P09 | Refund & pembatalan peminatan | Rencana |  |
@@ -42,26 +42,26 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 | HW-10 | `/reset-password/{token}` | `auth/reset-password` | P02 | Selesai | Terhubung | Disetujui | Reset password |
 | HW-11 | `/aktivasi/{token}` | `auth/aktivasi` | P02 | Selesai | Terhubung | Disetujui | Aktivasi akun admin (password → QR TOTP → recovery code) |
 | HW-12 | `/akun` | `akun/profil` | P02 | Selesai | Terhubung | Disetujui | Profil & keamanan akun |
-| HW-13 | `/dasbor`, `/status` | `peserta/dasbor`, `peserta/status` | P03 | Selesai | Terhubung | Disetujui | Dasbor peserta (tracker 5 tahap, kartu status, ringkasan, kartu pendaftar) + halaman Status & riwayat (A-83). Kartu tagihan STUB(P05) |
+| HW-13 | `/dasbor`, `/status` | `peserta/dasbor`, `peserta/status` | P03 | Selesai | Terhubung | Disetujui | Dasbor peserta (tracker 5 tahap, kartu status, ringkasan, kartu pendaftar) + halaman Status & riwayat (A-83). Kartu tagihan terhubung (P05) |
 | HW-14 | `/pendaftaran/baru` | `peserta/pendaftaran/pilih-peminatan` | P03 | Selesai | Terhubung | Disetujui | Pilih peminatan (membuat Draf + nomor pendaftaran; ubah pilihan selama Draf) |
 | HW-15 | `/pendaftaran/{nomor}` | `peserta/pendaftaran/formulir` | P03 | Selesai | Terhubung | Disetujui | Formulir pendaftaran (satu halaman, 3 tab: Data Diri · Berkas · Tinjau & Ajukan) |
 | HW-16 | `/pendaftaran/{nomor}/berkas` | `peserta/pendaftaran/berkas` | P03 | Selesai | Terhubung | Disetujui | Detail berkas & revisi |
-| HW-17 | `/tagihan` | `peserta/tagihan/index` | P05 | Belum | — | — | Daftar tagihan peserta |
-| HW-18 | `/tagihan/{kode_referensi}` | `peserta/tagihan/show` | P05 | Belum | — | — | Detail tagihan & unggah bukti (+ data pengiriman wajib) |
+| HW-17 | `/tagihan` | `peserta/tagihan/index` | P05 | Selesai | Terhubung | Disetujui | Daftar tagihan peserta |
+| HW-18 | `/tagihan/{kode_referensi}` | `peserta/tagihan/show` | P05 | Selesai | Terhubung | Disetujui | Detail tagihan & unggah bukti (+ data pengiriman wajib) |
 | HW-19 | `/refund`, `/refund/{id}` | `peserta/refund/{index,show}` | P09 | Belum | — | — | Refund peserta (daftar + formulir rekening) |
 | HW-20 | `/notifikasi` | `peserta/notifikasi` | P03 | Selesai | Terhubung | Disetujui | Notifikasi peserta (notifikasi in-app milik sendiri, tandai dibaca). Jenis notifikasi lain ditambah P05/P12 |
 | HW-21 | `/admin` | `admin/bersama/dasbor` | P12 | Belum | — | — | Dasbor admin per role |
 | HW-22 | `/admin/data-pendaftaran` | `admin/bersama/data-pendaftaran/index` | P11 | Belum | — | — | Data Pendaftaran (semua admin; ekspor hanya SILAU & Super Admin) |
 | HW-23 | `/admin/data-pendaftaran/{nomor}` | `admin/bersama/data-pendaftaran/show` | P11 | Belum | — | — | Detail pendaftaran baca-saja (Draf → 404) |
 | HW-24 | `/admin/notifikasi` | `admin/bersama/notifikasi` | P12 | Belum | — | — | Notifikasi admin |
-| HW-25 | `/admin/verifikasi-berkas` | `admin/silau/verifikasi-berkas/index` | P04 | Selesai | Terhubung | Menunggu Uji | Antrean verifikasi berkas |
-| HW-26 | `/admin/verifikasi-berkas/{nomor}` | `admin/silau/verifikasi-berkas/show` | P04 | Selesai | Terhubung | Menunggu Uji | Detail verifikasi berkas (document viewer, checklist, Valid/Ditolak + alasan, kuota minimum & NPD Terbit, Selesaikan, dialog 409) |
+| HW-25 | `/admin/verifikasi-berkas` | `admin/silau/verifikasi-berkas/index` | P04 | Selesai | Terhubung | Disetujui | Antrean verifikasi berkas |
+| HW-26 | `/admin/verifikasi-berkas/{nomor}` | `admin/silau/verifikasi-berkas/show` | P04 | Selesai | Terhubung | Disetujui | Detail verifikasi berkas (document viewer, checklist, Valid/Ditolak + alasan, kuota minimum & NPD Terbit, Selesaikan, dialog 409) |
 | HW-27 | `/admin/arsip-periode` | `admin/bersama/arsip-periode/index` | P11 | Belum | — | — | Arsip Periode (SILAU & Super Admin) |
-| HW-28 | `/admin/verifikasi-pembayaran` | `admin/keuangan/verifikasi-pembayaran/index` | P05 | Belum | — | — | Antrean verifikasi pembayaran |
-| HW-29 | `/admin/verifikasi-pembayaran/{kode_referensi}` | `admin/keuangan/verifikasi-pembayaran/show` | P05 | Belum | — | — | Detail verifikasi pembayaran (gerbang ganda, 409) |
+| HW-28 | `/admin/verifikasi-pembayaran` | `admin/keuangan/verifikasi-pembayaran/index` | P05 | Selesai | Terhubung | Disetujui | Antrean verifikasi pembayaran |
+| HW-29 | `/admin/verifikasi-pembayaran/{kode_referensi}` | `admin/keuangan/verifikasi-pembayaran/show` | P05 | Selesai | Terhubung | Disetujui | Detail verifikasi pembayaran (gerbang ganda, 409) |
 | HW-30 | `/admin/refund` | `admin/keuangan/refund/index` | P09 | Belum | — | — | Daftar refund (Admin Keuangan) |
 | HW-31 | `/admin/refund/{id}` | `admin/keuangan/refund/show` | P09 | Belum | — | — | Proses refund (pencocokan mutasi, rekening lengkap, bukti transfer) |
-| HW-32 | `/admin/rekap` | `admin/keuangan/rekap/index` | P05 | Belum | — | — | Rekap & ekspor keuangan |
+| HW-32 | `/admin/rekap` | `admin/keuangan/rekap/index` | P05 | Selesai | Terhubung | Disetujui | Rekap & ekspor keuangan |
 | HW-33 | `/admin/track` | `admin/track/track/index` | P07 | Belum | — | — | Track |
 | HW-34 | `/admin/peminatan` | `admin/track/peminatan/index` | P07 | Belum | — | — | Peminatan |
 | HW-35 | `/admin/peminatan/{kode}/tarif` | `admin/track/peminatan/tarif` | P07 | Belum | — | — | Tarif peminatan (berversi) |
@@ -71,8 +71,8 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 | HW-39 | `/admin/periode-akademik` | `admin/superadmin/periode-akademik/index` | P10 | Belum | — | — | Periode akademik |
 | HW-40 | `/admin/rollover` | `admin/superadmin/rollover/index` | P10 | Belum | — | — | Rollover semester (pratinjau → konfirmasi → status) |
 | HW-41 | `/admin/evaluasi-kuota` | `admin/superadmin/evaluasi-kuota/index` | P09 | Belum | — | — | Evaluasi kuota & pembatalan peminatan |
-| HW-42 | `/admin/tagihan/tanpa-jatuh-tempo` | `admin/superadmin/tagihan/tanpa-jatuh-tempo` | P05 | Belum | — | — | Tagihan tanpa jatuh tempo |
-| HW-43 | `/admin/tagihan`, `/admin/tagihan/{kode_referensi}` | `admin/superadmin/tagihan/{index,show}` | P05 | Belum | — | — | Cari & koreksi tagihan |
+| HW-42 | `/admin/tagihan/tanpa-jatuh-tempo` | `admin/superadmin/tagihan/tanpa-jatuh-tempo` | P05 | Selesai | Terhubung | Disetujui | Tagihan tanpa jatuh tempo |
+| HW-43 | `/admin/tagihan`, `/admin/tagihan/{kode_referensi}` | `admin/superadmin/tagihan/{index,show}` | P05 | Selesai | Terhubung | Disetujui | Cari & koreksi tagihan |
 | HW-44 | `/admin/akun` | `admin/superadmin/akun/index` | P02 | Selesai | Terhubung | Disetujui | Akun & role admin (Super Admin) |
 | HW-45 | `/admin/audit-log` | `admin/superadmin/audit-log/index` | P12 | Belum | — | — | Audit log (hanya baca) |
 | HW-46 | `/admin/cms` | `admin/superadmin/cms/index` | P08 | Belum | — | — | CMS landing page (Super Admin) |
@@ -85,7 +85,7 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 | HW-53 | — (halaman galat) | `errors/429` | P00 | Selesai | Terhubung | Menunggu | 429 Terlalu banyak permintaan; preview `/_preview/hw-53` |
 | HW-54 | — (halaman galat) | `errors/500` | P00 | Selesai | Terhubung | Menunggu | 500 Kesalahan server (tanpa detail teknis, NFR-35); preview `/_preview/hw-54` |
 | HW-55 | — (halaman galat) | `errors/503` | P00 | Selesai | Terhubung | Menunggu | Pemeliharaan (503); preview `/_preview/hw-55` |
-| HW-56 | `/admin/rekening` | `admin/keuangan/rekening/index` | P05 | Belum | — | — | Rekening institusi |
+| HW-56 | `/admin/rekening` | `admin/keuangan/rekening/index` | P05 | Selesai | Terhubung | Disetujui | Rekening institusi |
 
 ## Komponen FE-0 (`x-pv.*`)
 

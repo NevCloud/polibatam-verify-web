@@ -1,0 +1,636 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/127.0.0.1:8000"
+        }
+    ],
+    "info": {
+        "name": "Polibatam Verify API v1",
+        "_postman_id": "76d3444b-a467-45d8-b64b-cb6c8fa96a88",
+        "description": "REST API v1 untuk aplikasi mobile Admin SILAU & Admin Keuangan (P06, FR-60). Tidak ada endpoint peserta maupun keputusan massal.",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Autentikasi",
+            "description": "\nLogin dua tahap (FR-60, BR-59, NFR-47): password \u2192 `challenge_token` \u2192 kode TOTP \u2192 token Bearer 12 jam per perangkat.",
+            "item": [
+                {
+                    "name": "Login (tahap 1)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/auth\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/auth\/login"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"silau@polibatam-verify.test\",\"password\":\"|]|{+-\",\"nama_perangkat\":\"Pixel 8 Bayu\"}"
+                        },
+                        "description": "Selalu mengembalikan `challenge_token` (2FA wajib untuk admin, K-33). Hanya Admin SILAU & Admin Keuangan; role lain 403.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Verifikasi kode TOTP (tahap 2)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/auth\/two-factor",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/auth\/two-factor"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"challenge_token\":\"architecto\",\"code\":\"123456\",\"recovery_code\":\"architecto\"}"
+                        },
+                        "description": "Mengembalikan token Sanctum yang berlaku 12 jam. Gagal berturut-turut mengunci akun seperti di web (BR-03).",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/auth\/logout",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/auth\/logout"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Mencabut token perangkat ini."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Profil & role",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/me",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/me"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Umum",
+            "description": "\nDasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).",
+            "item": [
+                {
+                    "name": "Ringkasan dasbor",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/dasbor\/ringkasan",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/dasbor\/ringkasan"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Admin SILAU: jumlah antrean berkas. Admin Keuangan: jumlah tagihan Menunggu Verifikasi dan yang siap diputuskan (lolos gerbang ganda)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Daftar notifikasi",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/notifikasi",
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Halaman.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "20",
+                                    "description": "1\u2013100, bawaan 20.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/notifikasi?page=1&per_page=20"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Tandai notifikasi dibaca",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/notifikasi\/:id\/dibaca",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/notifikasi\/:id\/dibaca",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the notifikasi."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Tautan berkas bertanda tangan",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/berkas\/:id\/tautan",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/berkas\/:id\/tautan",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": 16,
+                                    "description": "ID versi dokumen (SILAU) atau bukti pembayaran (Keuangan)."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Admin SILAU: `id` = versi dokumen pendaftar. Admin Keuangan: `id` = bukti pembayaran. Tautan berlaku 15 menit."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Verifikasi Berkas (Admin SILAU)",
+            "description": "\nFR-18\u2013FR-21, FR-61, BR-13, BR-61, BR-64, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit \"mobile\".\nTidak ada endpoint keputusan massal; Fast Verify = keputusan satu per satu lewat endpoint yang sama (BR-74).",
+            "item": [
+                {
+                    "name": "Antrean verifikasi berkas",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-berkas",
+                            "query": [
+                                {
+                                    "key": "periode",
+                                    "value": "16",
+                                    "description": "ID periode pendaftaran.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "track",
+                                    "value": "TI",
+                                    "description": "Kode track.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "peminatan",
+                                    "value": "16",
+                                    "description": "ID peminatan.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "jenis",
+                                    "value": "revisi",
+                                    "description": "`baru` atau `revisi` (revisi masuk).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "20",
+                                    "description": "1\u2013100, bawaan 20.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-berkas?periode=16&track=TI&peminatan=16&jenis=revisi&page=1&per_page=20"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Pendaftaran berstatus Diajukan (tanpa Draf), urut pengajuan terlama."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Detail verifikasi berkas",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-berkas\/:pendaftaran_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-berkas\/:pendaftaran_id",
+                            "variable": [
+                                {
+                                    "id": "pendaftaran_id",
+                                    "key": "pendaftaran_id",
+                                    "value": "architecto",
+                                    "description": "The ID of the pendaftaran."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Biodata (NIK tersamar), dokumen + checklist per jenis, kuota minimum peminatan. `versi` tiap dokumen dikirim kembali saat memutuskan."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Keputusan per dokumen",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-berkas\/:pendaftaran_id\/dokumen\/:dokumen_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-berkas\/:pendaftaran_id\/dokumen\/:dokumen_id",
+                            "variable": [
+                                {
+                                    "id": "pendaftaran_id",
+                                    "key": "pendaftaran_id",
+                                    "value": "architecto",
+                                    "description": "The ID of the pendaftaran."
+                                },
+                                {
+                                    "id": "dokumen_id",
+                                    "key": "dokumen_id",
+                                    "value": 1,
+                                    "description": "The ID of the dokumen."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"keputusan\":\"valid\",\"versi\":\"2026-11-26 03:00:00.000000\",\"kriteria\":[16],\"catatan\":\"architecto\"}"
+                        },
+                        "description": "Valid hanya bila semua kriteria checklist dicentang; Ditolak wajib kriteria tak terpenuhi dan\/atau catatan (A-64). Versi usang \u2192 409 `SUDAH_DIVERIFIKASI`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Selesaikan verifikasi",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-berkas\/:pendaftaran_id\/selesai",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-berkas\/:pendaftaran_id\/selesai",
+                            "variable": [
+                                {
+                                    "id": "pendaftaran_id",
+                                    "key": "pendaftaran_id",
+                                    "value": "architecto",
+                                    "description": "The ID of the pendaftaran."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Semua dokumen harus sudah diputuskan \u2192 Perlu Revisi (ada Ditolak) atau Masuk Kuota (semua Valid, K-42)."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Verifikasi Pembayaran (Admin Keuangan)",
+            "description": "\nFR-31\u2013FR-35, FR-61, BR-38, BR-39, BR-61, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit \"mobile\".",
+            "item": [
+                {
+                    "name": "Antrean verifikasi pembayaran",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-pembayaran",
+                            "query": [
+                                {
+                                    "key": "jenis",
+                                    "value": "formulir",
+                                    "description": "`formulir` atau `semester`.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "semester_ke",
+                                    "value": "16",
+                                    "description": "Semester ke-n (untuk jenis semester).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "peminatan",
+                                    "value": "16",
+                                    "description": "ID peminatan.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "periode",
+                                    "value": "16",
+                                    "description": "ID periode pendaftaran.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "siap",
+                                    "value": "1",
+                                    "description": "Hanya tagihan yang dapat ditandai Lunas.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "20",
+                                    "description": "1\u2013100, bawaan 20.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-pembayaran?jenis=formulir&semester_ke=16&peminatan=16&periode=16&siap=1&page=1&per_page=20"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Tagihan Menunggu Verifikasi, urut pengunggahan terlama. `siap=1` = hanya yang lolos gerbang ganda (Fast Verify, BR-74)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Detail verifikasi pembayaran",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi",
+                            "variable": [
+                                {
+                                    "id": "tagihan_kode_referensi",
+                                    "key": "tagihan_kode_referensi",
+                                    "value": "TG-UJI-0001",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Nominal + kode unik, pemilik, bukti & data pengiriman, status gerbang ganda. `versi` dikirim kembali saat memutuskan."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Tandai Lunas",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi\/lunas",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi\/lunas",
+                            "variable": [
+                                {
+                                    "id": "tagihan_kode_referensi",
+                                    "key": "tagihan_kode_referensi",
+                                    "value": "TG-UJI-0001",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"versi\":\"2026-11-26 03:00:00.000000\"}"
+                        },
+                        "description": "Formulir \u2192 NPD terbit + tagihan Semester 1; semester \u2192 peserta Aktif. Belum lolos gerbang ganda \u2192 409; versi usang \u2192 409 `SUDAH_DIVERIFIKASI`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Tolak pembayaran",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi\/tolak",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/verifikasi-pembayaran\/:tagihan_kode_referensi\/tolak",
+                            "variable": [
+                                {
+                                    "id": "tagihan_kode_referensi",
+                                    "key": "tagihan_kode_referensi",
+                                    "value": "TG-UJI-0001",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"versi\":\"2026-11-26 03:00:00.000000\",\"alasan\":[\"architecto\"],\"catatan\":\"architecto\"}"
+                        },
+                        "description": "Wajib alasan baku dan\/atau catatan (BR-38, A-64). Peserta dapat mengunggah ulang bukti."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "key",
+                "type": "string"
+            }
+        ]
+    }
+}

@@ -8,6 +8,7 @@ use App\Models\PeriodePendaftaran;
 use App\Models\Track;
 use App\Services\NikHasher;
 use App\Support\Ui\Format;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,15 @@ class AntreanVerifikasiQuery
     public const JENIS = ['baru' => 'Pengajuan baru', 'revisi' => 'Revisi masuk'];
 
     public function __construct(private NikHasher $nik) {}
+
+    /** "Revisi masuk" = pernah ada keputusan Ditolak pada salah satu dokumennya (diajukan ulang setelah Perlu Revisi). Dipakai web & API. */
+    public static function pernahDitolak(): Closure
+    {
+        return fn ($q) => $q->select(DB::raw(1))->from('verifikasi_dokumens as vd')
+            ->join('dokumen_versis as dv', 'dv.id', '=', 'vd.dokumen_versi_id')
+            ->join('dokumens as d', 'd.id', '=', 'dv.dokumen_id')
+            ->whereColumn('d.pendaftaran_id', 'pendaftarans.id')->where('vd.keputusan', 'ditolak');
+    }
 
     /**
      * @param  array<string, mixed>  $filter
@@ -41,11 +51,7 @@ class AntreanVerifikasiQuery
             'jenis' => array_key_exists((string) ($filter['jenis'] ?? ''), self::JENIS) ? (string) $filter['jenis'] : '',
         ];
         $nikCari = preg_replace('/\D/', '', $filter['q']);
-        // "Revisi masuk" = pernah ada keputusan Ditolak pada salah satu dokumennya (diajukan ulang setelah Perlu Revisi).
-        $pernahDitolak = fn ($q) => $q->select(DB::raw(1))->from('verifikasi_dokumens as vd')
-            ->join('dokumen_versis as dv', 'dv.id', '=', 'vd.dokumen_versi_id')
-            ->join('dokumens as d', 'd.id', '=', 'dv.dokumen_id')
-            ->whereColumn('d.pendaftaran_id', 'pendaftarans.id')->where('vd.keputusan', 'ditolak');
+        $pernahDitolak = self::pernahDitolak();
 
         $dasar = Pendaftaran::untukAdmin()->where('status', 'diajukan');
 

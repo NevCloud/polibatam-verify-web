@@ -1,0 +1,2494 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Polibatam Verify API v1</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./css/theme-default.style.css" media="screen">
+    <link rel="stylesheet" href="./css/theme-default.print.css" media="print">
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/styles/obsidian.min.css">
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jets/0.14.1/jets.min.js"></script>
+
+    <style id="language-style">
+        /* starts out as display none and is replaced with js later  */
+                    body .content .bash-example code { display: none; }
+                    body .content .javascript-example code { display: none; }
+            </style>
+
+
+    <script src="./js/theme-default-5.11.0.js"></script>
+
+</head>
+
+<body data-languages="[&quot;bash&quot;,&quot;javascript&quot;]">
+
+<a href="#" id="nav-button">
+    <span>
+        MENU
+        <img src="./images/navbar.png" alt="navbar-image"/>
+    </span>
+</a>
+<div class="tocify-wrapper">
+    
+            <div class="lang-selector">
+                                            <button type="button" class="lang-button" data-language-name="bash">bash</button>
+                                            <button type="button" class="lang-button" data-language-name="javascript">javascript</button>
+                    </div>
+    
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+
+    <div id="toc">
+                    <ul id="tocify-header-introduction" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="introduction">
+                    <a href="#introduction">Introduction</a>
+                </li>
+                            </ul>
+                    <ul id="tocify-header-authenticating-requests" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="authenticating-requests">
+                    <a href="#authenticating-requests">Authenticating requests</a>
+                </li>
+                            </ul>
+                    <ul id="tocify-header-autentikasi" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="autentikasi">
+                    <a href="#autentikasi">Autentikasi</a>
+                </li>
+                                    <ul id="tocify-subheader-autentikasi" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="autentikasi-POSTapi-v1-auth-login">
+                                <a href="#autentikasi-POSTapi-v1-auth-login">Login (tahap 1)</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="autentikasi-POSTapi-v1-auth-two-factor">
+                                <a href="#autentikasi-POSTapi-v1-auth-two-factor">Verifikasi kode TOTP (tahap 2)</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="autentikasi-POSTapi-v1-auth-logout">
+                                <a href="#autentikasi-POSTapi-v1-auth-logout">Logout</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="autentikasi-GETapi-v1-me">
+                                <a href="#autentikasi-GETapi-v1-me">Profil & role</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
+                    <ul id="tocify-header-umum" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="umum">
+                    <a href="#umum">Umum</a>
+                </li>
+                                    <ul id="tocify-subheader-umum" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="umum-GETapi-v1-dasbor-ringkasan">
+                                <a href="#umum-GETapi-v1-dasbor-ringkasan">Ringkasan dasbor</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="umum-GETapi-v1-notifikasi">
+                                <a href="#umum-GETapi-v1-notifikasi">Daftar notifikasi</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="umum-PATCHapi-v1-notifikasi--id--dibaca">
+                                <a href="#umum-PATCHapi-v1-notifikasi--id--dibaca">Tandai notifikasi dibaca</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="umum-GETapi-v1-berkas--id--tautan">
+                                <a href="#umum-GETapi-v1-berkas--id--tautan">Tautan berkas bertanda tangan</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
+                    <ul id="tocify-header-verifikasi-berkas-admin-silau" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="verifikasi-berkas-admin-silau">
+                    <a href="#verifikasi-berkas-admin-silau">Verifikasi Berkas (Admin SILAU)</a>
+                </li>
+                                    <ul id="tocify-subheader-verifikasi-berkas-admin-silau" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas">
+                                <a href="#verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas">Antrean verifikasi berkas</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas--pendaftaran_id-">
+                                <a href="#verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas--pendaftaran_id-">Detail verifikasi berkas</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-berkas-admin-silau-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">
+                                <a href="#verifikasi-berkas-admin-silau-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">Keputusan per dokumen</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-berkas-admin-silau-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">
+                                <a href="#verifikasi-berkas-admin-silau-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">Selesaikan verifikasi</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
+                    <ul id="tocify-header-verifikasi-pembayaran-admin-keuangan" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="verifikasi-pembayaran-admin-keuangan">
+                    <a href="#verifikasi-pembayaran-admin-keuangan">Verifikasi Pembayaran (Admin Keuangan)</a>
+                </li>
+                                    <ul id="tocify-subheader-verifikasi-pembayaran-admin-keuangan" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran">
+                                <a href="#verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran">Antrean verifikasi pembayaran</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">
+                                <a href="#verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">Detail verifikasi pembayaran</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">
+                                <a href="#verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">Tandai Lunas</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">
+                                <a href="#verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">Tolak pembayaran</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
+            </div>
+
+    <ul class="toc-footer" id="toc-footer">
+                    <li style="padding-bottom: 5px;"><a href="./collection.json">View Postman collection</a></li>
+                            <li style="padding-bottom: 5px;"><a href="./openapi.yaml">View OpenAPI spec</a></li>
+                <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
+    </ul>
+
+    <ul class="toc-footer" id="last-updated">
+        <li>Last updated: November 25, 2026</li>
+    </ul>
+</div>
+
+<div class="page-wrapper">
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="introduction">Introduction</h1>
+<p>REST API v1 untuk aplikasi mobile Admin SILAU &amp; Admin Keuangan (P06, FR-60). Tidak ada endpoint peserta maupun keputusan massal.</p>
+<aside>
+    <strong>Base URL</strong>: <code>http://127.0.0.1:8000</code>
+</aside>
+<pre><code>Format respons: `{success, message, data, meta}`; galat: `{success: false, message, code, errors}`. Waktu ISO 8601 UTC, uang integer Rupiah.
+Login dua tahap: `POST /auth/login` → `challenge_token` → `POST /auth/two-factor` → token Bearer 12 jam per perangkat.
+Setiap keputusan verifikasi membawa `versi`; bila data sudah diputuskan admin lain → 409 `SUDAH_DIVERIFIKASI`.</code></pre>
+
+        <h1 id="authenticating-requests">Authenticating requests</h1>
+<p>To authenticate requests, include an <strong><code>Authorization</code></strong> header with the value <strong><code>"Bearer {TOKEN}"</code></strong>.</p>
+<p>All authenticated endpoints are marked with a <code>requires authentication</code> badge in the documentation below.</p>
+<p>Token diperoleh dari <code>POST /auth/two-factor</code> setelah login; berlaku 12 jam.</p>
+
+        <h1 id="autentikasi">Autentikasi</h1>
+
+    <p>Login dua tahap (FR-60, BR-59, NFR-47): password → <code>challenge_token</code> → kode TOTP → token Bearer 12 jam per perangkat.</p>
+
+                                <h2 id="autentikasi-POSTapi-v1-auth-login">Login (tahap 1)</h2>
+
+<p>
+</p>
+
+<p>Selalu mengembalikan <code>challenge_token</code> (2FA wajib untuk admin, K-33). Hanya Admin SILAU &amp; Admin Keuangan; role lain 403.</p>
+
+<span id="example-requests-POSTapi-v1-auth-login">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/auth/login" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"email\": \"silau@polibatam-verify.test\",
+    \"password\": \"|]|{+-\",
+    \"nama_perangkat\": \"Pixel 8 Bayu\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/auth/login"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "email": "silau@polibatam-verify.test",
+    "password": "|]|{+-",
+    "nama_perangkat": "Pixel 8 Bayu"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-auth-login">
+</span>
+<span id="execution-results-POSTapi-v1-auth-login" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-auth-login"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-auth-login"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-auth-login" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-auth-login">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-auth-login" data-method="POST"
+      data-path="api/v1/auth/login"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-auth-login', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/auth/login</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-auth-login"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-auth-login"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="POSTapi-v1-auth-login"
+               value="silau@polibatam-verify.test"
+               data-component="body">
+    <br>
+<p>Email akun admin. Example: <code>silau@polibatam-verify.test</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="POSTapi-v1-auth-login"
+               value="|]|{+-"
+               data-component="body">
+    <br>
+<p>Password akun. Example: <code>|]|{+-</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>nama_perangkat</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="nama_perangkat"                data-endpoint="POSTapi-v1-auth-login"
+               value="Pixel 8 Bayu"
+               data-component="body">
+    <br>
+<p>Nama perangkat (satu token per perangkat). Example: <code>Pixel 8 Bayu</code></p>
+        </div>
+        </form>
+
+                    <h2 id="autentikasi-POSTapi-v1-auth-two-factor">Verifikasi kode TOTP (tahap 2)</h2>
+
+<p>
+</p>
+
+<p>Mengembalikan token Sanctum yang berlaku 12 jam. Gagal berturut-turut mengunci akun seperti di web (BR-03).</p>
+
+<span id="example-requests-POSTapi-v1-auth-two-factor">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/auth/two-factor" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"challenge_token\": \"architecto\",
+    \"code\": \"123456\",
+    \"recovery_code\": \"architecto\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/auth/two-factor"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "challenge_token": "architecto",
+    "code": "123456",
+    "recovery_code": "architecto"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-auth-two-factor">
+</span>
+<span id="execution-results-POSTapi-v1-auth-two-factor" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-auth-two-factor"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-auth-two-factor"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-auth-two-factor" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-auth-two-factor">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-auth-two-factor" data-method="POST"
+      data-path="api/v1/auth/two-factor"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-auth-two-factor', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/auth/two-factor</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-auth-two-factor"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-auth-two-factor"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>challenge_token</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="challenge_token"                data-endpoint="POSTapi-v1-auth-two-factor"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Token dari tahap 1 (berlaku 5 menit). Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>code</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="code"                data-endpoint="POSTapi-v1-auth-two-factor"
+               value="123456"
+               data-component="body">
+    <br>
+<p>Kode 6 digit dari aplikasi autentikator. Wajib bila <code>recovery_code</code> kosong. Example: <code>123456</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>recovery_code</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="recovery_code"                data-endpoint="POSTapi-v1-auth-two-factor"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Recovery code sekali pakai. Example: <code>architecto</code></p>
+        </div>
+        </form>
+
+                    <h2 id="autentikasi-POSTapi-v1-auth-logout">Logout</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Mencabut token perangkat ini.</p>
+
+<span id="example-requests-POSTapi-v1-auth-logout">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/auth/logout" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/auth/logout"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "POST",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-auth-logout">
+</span>
+<span id="execution-results-POSTapi-v1-auth-logout" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-auth-logout"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-auth-logout"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-auth-logout" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-auth-logout">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-auth-logout" data-method="POST"
+      data-path="api/v1/auth/logout"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-auth-logout', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/auth/logout</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-auth-logout"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-auth-logout"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-auth-logout"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="autentikasi-GETapi-v1-me">Profil &amp; role</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-me">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/me" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/me"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-me">
+    </span>
+<span id="execution-results-GETapi-v1-me" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-me"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-me"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-me" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-me">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-me" data-method="GET"
+      data-path="api/v1/me"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-me', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/me</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-me"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                <h1 id="umum">Umum</h1>
+
+    <p>Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).</p>
+
+                                <h2 id="umum-GETapi-v1-dasbor-ringkasan">Ringkasan dasbor</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Admin SILAU: jumlah antrean berkas. Admin Keuangan: jumlah tagihan Menunggu Verifikasi dan yang siap diputuskan (lolos gerbang ganda).</p>
+
+<span id="example-requests-GETapi-v1-dasbor-ringkasan">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/dasbor/ringkasan" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/dasbor/ringkasan"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-dasbor-ringkasan">
+    </span>
+<span id="execution-results-GETapi-v1-dasbor-ringkasan" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-dasbor-ringkasan"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-dasbor-ringkasan"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-dasbor-ringkasan" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-dasbor-ringkasan">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-dasbor-ringkasan" data-method="GET"
+      data-path="api/v1/dasbor/ringkasan"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-dasbor-ringkasan', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/dasbor/ringkasan</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-dasbor-ringkasan"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-dasbor-ringkasan"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-dasbor-ringkasan"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="umum-GETapi-v1-notifikasi">Daftar notifikasi</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-notifikasi">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/notifikasi?page=1&amp;per_page=20" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/notifikasi"
+);
+
+const params = {
+    "page": "1",
+    "per_page": "20",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-notifikasi">
+    </span>
+<span id="execution-results-GETapi-v1-notifikasi" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-notifikasi"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-notifikasi"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-notifikasi" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-notifikasi">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-notifikasi" data-method="GET"
+      data-path="api/v1/notifikasi"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-notifikasi', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/notifikasi</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-notifikasi"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-notifikasi"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-notifikasi"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-notifikasi"
+               value="1"
+               data-component="query">
+    <br>
+<p>Halaman. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-notifikasi"
+               value="20"
+               data-component="query">
+    <br>
+<p>1–100, bawaan 20. Example: <code>20</code></p>
+            </div>
+                </form>
+
+                    <h2 id="umum-PATCHapi-v1-notifikasi--id--dibaca">Tandai notifikasi dibaca</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-PATCHapi-v1-notifikasi--id--dibaca">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://127.0.0.1:8000/api/v1/notifikasi/architecto/dibaca" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/notifikasi/architecto/dibaca"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHapi-v1-notifikasi--id--dibaca">
+</span>
+<span id="execution-results-PATCHapi-v1-notifikasi--id--dibaca" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHapi-v1-notifikasi--id--dibaca"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHapi-v1-notifikasi--id--dibaca"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHapi-v1-notifikasi--id--dibaca" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHapi-v1-notifikasi--id--dibaca">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHapi-v1-notifikasi--id--dibaca" data-method="PATCH"
+      data-path="api/v1/notifikasi/{id}/dibaca"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-v1-notifikasi--id--dibaca', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/v1/notifikasi/{id}/dibaca</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-v1-notifikasi--id--dibaca"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHapi-v1-notifikasi--id--dibaca"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHapi-v1-notifikasi--id--dibaca"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PATCHapi-v1-notifikasi--id--dibaca"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the notifikasi. Example: <code>architecto</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="umum-GETapi-v1-berkas--id--tautan">Tautan berkas bertanda tangan</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Admin SILAU: <code>id</code> = versi dokumen pendaftar. Admin Keuangan: <code>id</code> = bukti pembayaran. Tautan berlaku 15 menit.</p>
+
+<span id="example-requests-GETapi-v1-berkas--id--tautan">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/berkas/16/tautan" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/berkas/16/tautan"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-berkas--id--tautan">
+    </span>
+<span id="execution-results-GETapi-v1-berkas--id--tautan" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-berkas--id--tautan"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-berkas--id--tautan"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-berkas--id--tautan" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-berkas--id--tautan">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-berkas--id--tautan" data-method="GET"
+      data-path="api/v1/berkas/{id}/tautan"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-berkas--id--tautan', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/berkas/{id}/tautan</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-berkas--id--tautan"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-berkas--id--tautan"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-berkas--id--tautan"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-v1-berkas--id--tautan"
+               value="16"
+               data-component="url">
+    <br>
+<p>ID versi dokumen (SILAU) atau bukti pembayaran (Keuangan). Example: <code>16</code></p>
+            </div>
+                    </form>
+
+                <h1 id="verifikasi-berkas-admin-silau">Verifikasi Berkas (Admin SILAU)</h1>
+
+    <p>FR-18–FR-21, FR-61, BR-13, BR-61, BR-64, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit "mobile".
+Tidak ada endpoint keputusan massal; Fast Verify = keputusan satu per satu lewat endpoint yang sama (BR-74).</p>
+
+                                <h2 id="verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas">Antrean verifikasi berkas</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Pendaftaran berstatus Diajukan (tanpa Draf), urut pengajuan terlama.</p>
+
+<span id="example-requests-GETapi-v1-verifikasi-berkas">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/verifikasi-berkas?periode=16&amp;track=TI&amp;peminatan=16&amp;jenis=revisi&amp;page=1&amp;per_page=20" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas"
+);
+
+const params = {
+    "periode": "16",
+    "track": "TI",
+    "peminatan": "16",
+    "jenis": "revisi",
+    "page": "1",
+    "per_page": "20",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-verifikasi-berkas">
+    </span>
+<span id="execution-results-GETapi-v1-verifikasi-berkas" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-verifikasi-berkas"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-verifikasi-berkas"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-verifikasi-berkas" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-verifikasi-berkas">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-verifikasi-berkas" data-method="GET"
+      data-path="api/v1/verifikasi-berkas"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-verifikasi-berkas', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/verifikasi-berkas</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>periode</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="periode"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID periode pendaftaran. Example: <code>16</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>track</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="track"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="TI"
+               data-component="query">
+    <br>
+<p>Kode track. Example: <code>TI</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>peminatan</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="peminatan"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID peminatan. Example: <code>16</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>jenis</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="jenis"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="revisi"
+               data-component="query">
+    <br>
+<p><code>baru</code> atau <code>revisi</code> (revisi masuk). Example: <code>revisi</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="1"
+               data-component="query">
+    <br>
+<p>Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-verifikasi-berkas"
+               value="20"
+               data-component="query">
+    <br>
+<p>1–100, bawaan 20. Example: <code>20</code></p>
+            </div>
+                </form>
+
+                    <h2 id="verifikasi-berkas-admin-silau-GETapi-v1-verifikasi-berkas--pendaftaran_id-">Detail verifikasi berkas</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Biodata (NIK tersamar), dokumen + checklist per jenis, kuota minimum peminatan. <code>versi</code> tiap dokumen dikirim kembali saat memutuskan.</p>
+
+<span id="example-requests-GETapi-v1-verifikasi-berkas--pendaftaran_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-verifikasi-berkas--pendaftaran_id-">
+    </span>
+<span id="execution-results-GETapi-v1-verifikasi-berkas--pendaftaran_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-verifikasi-berkas--pendaftaran_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-verifikasi-berkas--pendaftaran_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-verifikasi-berkas--pendaftaran_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-verifikasi-berkas--pendaftaran_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-verifikasi-berkas--pendaftaran_id-" data-method="GET"
+      data-path="api/v1/verifikasi-berkas/{pendaftaran_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-verifikasi-berkas--pendaftaran_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/verifikasi-berkas/{pendaftaran_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-verifikasi-berkas--pendaftaran_id-"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-verifikasi-berkas--pendaftaran_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-verifikasi-berkas--pendaftaran_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>pendaftaran_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="pendaftaran_id"                data-endpoint="GETapi-v1-verifikasi-berkas--pendaftaran_id-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the pendaftaran. Example: <code>architecto</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="verifikasi-berkas-admin-silau-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">Keputusan per dokumen</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Valid hanya bila semua kriteria checklist dicentang; Ditolak wajib kriteria tak terpenuhi dan/atau catatan (A-64). Versi usang → 409 <code>SUDAH_DIVERIFIKASI</code>.</p>
+
+<span id="example-requests-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto/dokumen/1" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"keputusan\": \"valid\",
+    \"versi\": \"2026-11-26 03:00:00.000000\",
+    \"kriteria\": [
+        16
+    ],
+    \"catatan\": \"architecto\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto/dokumen/1"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "keputusan": "valid",
+    "versi": "2026-11-26 03:00:00.000000",
+    "kriteria": [
+        16
+    ],
+    "catatan": "architecto"
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">
+</span>
+<span id="execution-results-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-" data-method="PUT"
+      data-path="api/v1/verifikasi-berkas/{pendaftaran_id}/dokumen/{dokumen_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/verifikasi-berkas/{pendaftaran_id}/dokumen/{dokumen_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>pendaftaran_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="pendaftaran_id"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the pendaftaran. Example: <code>architecto</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>dokumen_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="dokumen_id"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the dokumen. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>keputusan</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="keputusan"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="valid"
+               data-component="body">
+    <br>
+<p><code>valid</code> atau <code>ditolak</code>. Example: <code>valid</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>versi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="versi"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="2026-11-26 03:00:00.000000"
+               data-component="body">
+    <br>
+<p>Nilai <code>versi</code> dokumen dari detail. Example: <code>2026-11-26 03:00:00.000000</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>kriteria</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="kriteria[0]"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="kriteria[1]"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               data-component="body">
+    <br>
+<p>ID kriteria yang terpenuhi (dicentang).</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>catatan</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="catatan"                data-endpoint="PUTapi-v1-verifikasi-berkas--pendaftaran_id--dokumen--dokumen_id-"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Catatan penolakan. Example: <code>architecto</code></p>
+        </div>
+        </form>
+
+                    <h2 id="verifikasi-berkas-admin-silau-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">Selesaikan verifikasi</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Semua dokumen harus sudah diputuskan → Perlu Revisi (ada Ditolak) atau Masuk Kuota (semua Valid, K-42).</p>
+
+<span id="example-requests-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto/selesai" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-berkas/architecto/selesai"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "POST",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">
+</span>
+<span id="execution-results-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai" data-method="POST"
+      data-path="api/v1/verifikasi-berkas/{pendaftaran_id}/selesai"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/verifikasi-berkas/{pendaftaran_id}/selesai</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>pendaftaran_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="pendaftaran_id"                data-endpoint="POSTapi-v1-verifikasi-berkas--pendaftaran_id--selesai"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the pendaftaran. Example: <code>architecto</code></p>
+            </div>
+                    </form>
+
+                <h1 id="verifikasi-pembayaran-admin-keuangan">Verifikasi Pembayaran (Admin Keuangan)</h1>
+
+    <p>FR-31–FR-35, FR-61, BR-38, BR-39, BR-61, BR-66, BR-74. Aturan sama dengan web (AC-30.3): Action yang sama, kanal audit "mobile".</p>
+
+                                <h2 id="verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran">Antrean verifikasi pembayaran</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Tagihan Menunggu Verifikasi, urut pengunggahan terlama. <code>siap=1</code> = hanya yang lolos gerbang ganda (Fast Verify, BR-74).</p>
+
+<span id="example-requests-GETapi-v1-verifikasi-pembayaran">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran?jenis=formulir&amp;semester_ke=16&amp;peminatan=16&amp;periode=16&amp;siap=1&amp;page=1&amp;per_page=20" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran"
+);
+
+const params = {
+    "jenis": "formulir",
+    "semester_ke": "16",
+    "peminatan": "16",
+    "periode": "16",
+    "siap": "1",
+    "page": "1",
+    "per_page": "20",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-verifikasi-pembayaran">
+    </span>
+<span id="execution-results-GETapi-v1-verifikasi-pembayaran" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-verifikasi-pembayaran"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-verifikasi-pembayaran"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-verifikasi-pembayaran" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-verifikasi-pembayaran">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-verifikasi-pembayaran" data-method="GET"
+      data-path="api/v1/verifikasi-pembayaran"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-verifikasi-pembayaran', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/verifikasi-pembayaran</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>jenis</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="jenis"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="formulir"
+               data-component="query">
+    <br>
+<p><code>formulir</code> atau <code>semester</code>. Example: <code>formulir</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>semester_ke</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="semester_ke"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="16"
+               data-component="query">
+    <br>
+<p>Semester ke-n (untuk jenis semester). Example: <code>16</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>peminatan</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="peminatan"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID peminatan. Example: <code>16</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>periode</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="periode"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID periode pendaftaran. Example: <code>16</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>siap</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-verifikasi-pembayaran" style="display: none">
+            <input type="radio" name="siap"
+                   value="1"
+                   data-endpoint="GETapi-v1-verifikasi-pembayaran"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-verifikasi-pembayaran" style="display: none">
+            <input type="radio" name="siap"
+                   value="0"
+                   data-endpoint="GETapi-v1-verifikasi-pembayaran"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Hanya tagihan yang dapat ditandai Lunas. Example: <code>true</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="1"
+               data-component="query">
+    <br>
+<p>Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-verifikasi-pembayaran"
+               value="20"
+               data-component="query">
+    <br>
+<p>1–100, bawaan 20. Example: <code>20</code></p>
+            </div>
+                </form>
+
+                    <h2 id="verifikasi-pembayaran-admin-keuangan-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">Detail verifikasi pembayaran</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Nominal + kode unik, pemilik, bukti &amp; data pengiriman, status gerbang ganda. <code>versi</code> dikirim kembali saat memutuskan.</p>
+
+<span id="example-requests-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">
+    </span>
+<span id="execution-results-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-" data-method="GET"
+      data-path="api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tagihan_kode_referensi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tagihan_kode_referensi"                data-endpoint="GETapi-v1-verifikasi-pembayaran--tagihan_kode_referensi-"
+               value="TG-UJI-0001"
+               data-component="url">
+    <br>
+<p>Example: <code>TG-UJI-0001</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">Tandai Lunas</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Formulir → NPD terbit + tagihan Semester 1; semester → peserta Aktif. Belum lolos gerbang ganda → 409; versi usang → 409 <code>SUDAH_DIVERIFIKASI</code>.</p>
+
+<span id="example-requests-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001/lunas" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"versi\": \"2026-11-26 03:00:00.000000\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001/lunas"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "versi": "2026-11-26 03:00:00.000000"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">
+</span>
+<span id="execution-results-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas" data-method="POST"
+      data-path="api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/lunas"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/lunas</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tagihan_kode_referensi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tagihan_kode_referensi"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+               value="TG-UJI-0001"
+               data-component="url">
+    <br>
+<p>Example: <code>TG-UJI-0001</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>versi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="versi"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--lunas"
+               value="2026-11-26 03:00:00.000000"
+               data-component="body">
+    <br>
+<p>Nilai <code>versi</code> dari detail. Example: <code>2026-11-26 03:00:00.000000</code></p>
+        </div>
+        </form>
+
+                    <h2 id="verifikasi-pembayaran-admin-keuangan-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">Tolak pembayaran</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Wajib alasan baku dan/atau catatan (BR-38, A-64). Peserta dapat mengunggah ulang bukti.</p>
+
+<span id="example-requests-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001/tolak" \
+    --header "Authorization: Bearer {TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"versi\": \"2026-11-26 03:00:00.000000\",
+    \"alasan\": [
+        \"architecto\"
+    ],
+    \"catatan\": \"architecto\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/v1/verifikasi-pembayaran/TG-UJI-0001/tolak"
+);
+
+const headers = {
+    "Authorization": "Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "versi": "2026-11-26 03:00:00.000000",
+    "alasan": [
+        "architecto"
+    ],
+    "catatan": "architecto"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">
+</span>
+<span id="execution-results-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak" data-method="POST"
+      data-path="api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/tolak"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/verifikasi-pembayaran/{tagihan_kode_referensi}/tolak</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="Bearer {TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tagihan_kode_referensi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tagihan_kode_referensi"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="TG-UJI-0001"
+               data-component="url">
+    <br>
+<p>Example: <code>TG-UJI-0001</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>versi</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="versi"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="2026-11-26 03:00:00.000000"
+               data-component="body">
+    <br>
+<p>Nilai <code>versi</code> dari detail. Example: <code>2026-11-26 03:00:00.000000</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>alasan</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="alasan[0]"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="alasan[1]"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               data-component="body">
+    <br>
+<p>Kunci alasan baku: mutasi_tidak_ditemukan, nominal_tidak_sesuai, bukti_tidak_terbaca.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>catatan</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="catatan"                data-endpoint="POSTapi-v1-verifikasi-pembayaran--tagihan_kode_referensi--tolak"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Catatan penolakan. Example: <code>architecto</code></p>
+        </div>
+        </form>
+
+            
+
+        
+    </div>
+    <div class="dark-box">
+                    <div class="lang-selector">
+                                                        <button type="button" class="lang-button" data-language-name="bash">bash</button>
+                                                        <button type="button" class="lang-button" data-language-name="javascript">javascript</button>
+                            </div>
+            </div>
+</div>
+</body>
+</html>

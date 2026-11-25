@@ -20,11 +20,13 @@ class BatasiPermintaanSensitif
         'login.store', 'register.store', 'password.email', 'password.update',
         'two-factor.login.store', 'aktivasi.store', 'aktivasi.autentikator.store',
         'pendaftaran.berkas.unggah', // P03: unggah dokumen (NFR-07, NFR-08)
+        'tagihan.unggah', // P05: unggah bukti pembayaran
     ];
 
-    public function handle(Request $request, Closure $next): Response
+    /** @param  string|null  $mode  `paksa` = berlaku untuk rute ini tanpa melihat RUTE (dipasang per rute, mis. login API P06). */
+    public function handle(Request $request, Closure $next, ?string $mode = null): Response
     {
-        if ($request->isMethodSafe() || ! $request->routeIs(self::RUTE)) {
+        if ($request->isMethodSafe() || ($mode !== 'paksa' && ! $request->routeIs(self::RUTE))) {
             return $next($request);
         }
 

@@ -11,3 +11,7 @@ Schedule::command('pendaftaran:batalkan-kedaluwarsa')->hourly()->withoutOverlapp
     ->onFailure(fn () => Log::error('pendaftaran:batalkan-kedaluwarsa gagal')); // BR-21
 Schedule::command('periode:tutup')->everyFifteenMinutes()->withoutOverlapping()
     ->onFailure(fn () => Log::error('periode:tutup gagal')); // BR-65, FR-25
+
+// P05
+Schedule::command('tagihan:cek-tanpa-jatuh-tempo')->dailyAt('07:00')->timezone('Asia/Jakarta')
+    ->onFailure(fn () => Log::error('tagihan:cek-tanpa-jatuh-tempo gagal')); // FR-57

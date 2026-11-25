@@ -1,0 +1,146 @@
+{
+  "info": {
+    "name": "Polibatam Verify — Uji P06 (Newman)",
+    "description": "Uji wajib P06: 200/401/403/404/409/422/429. Tidak mengubah data: keputusan hanya dikirim dengan versi usang (409) atau tanpa field wajib (422). Isi token_silau & token_keuangan dari POST /auth/two-factor (lihat doc/uji/P06.md).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api/v1" }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('Respons JSON berformat {success, message}', function () {",
+          "  if (pm.response.code === 204) { return; }",
+          "  const b = pm.response.json();",
+          "  pm.expect(b).to.have.property('success');",
+          "  pm.expect(b).to.have.property('message');",
+          "  if (!b.success) { pm.expect(b).to.have.property('code'); }",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "401 — /me tanpa token",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }], "url": "{{base_url}}/me" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('401 UNAUTHENTICATED', () => { pm.response.to.have.status(401); pm.expect(pm.response.json().code).to.eql('UNAUTHENTICATED'); });"
+      ] } }]
+    },
+    {
+      "name": "401 — /me token palsu",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer 1|tokenpalsu" }], "url": "{{base_url}}/me" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('401', () => pm.response.to.have.status(401));"
+      ] } }]
+    },
+    {
+      "name": "200 — /me (Admin SILAU)",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_silau}}" }], "url": "{{base_url}}/me" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 role admin_silau', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().data.role).to.eql('admin_silau'); });"
+      ] } }]
+    },
+    {
+      "name": "200 — ringkasan dasbor (Admin Keuangan)",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }], "url": "{{base_url}}/dasbor/ringkasan" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 + jumlah antrean integer', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().data.antrean_pembayaran).to.be.a('number'); });"
+      ] } }]
+    },
+    {
+      "name": "200 — notifikasi (Admin Keuangan)",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }], "url": "{{base_url}}/notifikasi?per_page=5" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 + meta paginasi', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().meta.per_page).to.eql(5); });"
+      ] } }]
+    },
+    {
+      "name": "200 — antrean verifikasi berkas (Admin SILAU), tanpa Draf",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_silau}}" }], "url": "{{base_url}}/verifikasi-berkas" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200', () => pm.response.to.have.status(200));",
+        "pm.test('Tidak ada Draf di antrean', () => pm.response.json().data.forEach(p => pm.expect(String(p.id)).to.not.eql(pm.environment.get('id_draf'))));"
+      ] } }]
+    },
+    {
+      "name": "200 — antrean verifikasi pembayaran (Admin Keuangan)",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }], "url": "{{base_url}}/verifikasi-pembayaran" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200', () => pm.response.to.have.status(200));"
+      ] } }]
+    },
+    {
+      "name": "403 — Admin SILAU membuka antrean pembayaran",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_silau}}" }], "url": "{{base_url}}/verifikasi-pembayaran" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('403 FORBIDDEN', () => { pm.response.to.have.status(403); pm.expect(pm.response.json().code).to.eql('FORBIDDEN'); });"
+      ] } }]
+    },
+    {
+      "name": "403 — Admin Keuangan membuka antrean berkas",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }], "url": "{{base_url}}/verifikasi-berkas" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('403', () => pm.response.to.have.status(403));"
+      ] } }]
+    },
+    {
+      "name": "404 — detail Draf lewat URL langsung",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_silau}}" }], "url": "{{base_url}}/verifikasi-berkas/{{id_draf}}" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('404 NOT_FOUND', () => { pm.response.to.have.status(404); pm.expect(pm.response.json().code).to.eql('NOT_FOUND'); });"
+      ] } }]
+    },
+    {
+      "name": "404 — tagihan tidak ada",
+      "request": { "method": "GET", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }], "url": "{{base_url}}/verifikasi-pembayaran/TG-TIDAK-ADA" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('404', () => pm.response.to.have.status(404));"
+      ] } }]
+    },
+    {
+      "name": "422 — tolak tanpa versi",
+      "request": { "method": "POST", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }],
+        "body": { "mode": "raw", "raw": "{}" }, "url": "{{base_url}}/verifikasi-pembayaran/{{kode_tagihan}}/tolak" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('422 VALIDATION_ERROR + errors.versi', () => { pm.response.to.have.status(422); const b = pm.response.json(); pm.expect(b.code).to.eql('VALIDATION_ERROR'); pm.expect(b.errors).to.have.property('versi'); });"
+      ] } }]
+    },
+    {
+      "name": "409 — Lunas dengan versi usang",
+      "request": { "method": "POST", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_keuangan}}" }],
+        "body": { "mode": "raw", "raw": "{\"versi\": \"2000-01-01 00:00:00.000000\"}" }, "url": "{{base_url}}/verifikasi-pembayaran/{{kode_tagihan}}/lunas" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('409 SUDAH_DIVERIFIKASI', () => { pm.response.to.have.status(409); pm.expect(pm.response.json().code).to.eql('SUDAH_DIVERIFIKASI'); });"
+      ] } }]
+    },
+    {
+      "name": "422 — login tanpa isian",
+      "request": { "method": "POST", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{}" }, "url": "{{base_url}}/auth/login" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('422', () => pm.response.to.have.status(422));"
+      ] } }]
+    },
+    {
+      "name": "429 — login lebih dari 10 kali per menit",
+      "request": { "method": "POST", "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"email\": \"tidak.ada@contoh.test\", \"password\": \"salah\", \"nama_perangkat\": \"newman\"}" }, "url": "{{base_url}}/auth/login" },
+      "event": [
+        { "listen": "prerequest", "script": { "exec": [
+          "const kirim = (n) => { if (n === 0) return; pm.sendRequest({ url: pm.variables.replaceIn('{{base_url}}/auth/login'), method: 'POST', header: { 'Accept': 'application/json', 'Content-Type': 'application/json' },",
+          "  body: { mode: 'raw', raw: JSON.stringify({ email: 'tidak.ada@contoh.test', password: 'salah', nama_perangkat: 'newman' }) } }, () => kirim(n - 1)); };",
+          "kirim(10);"
+        ] } },
+        { "listen": "test", "script": { "exec": [
+          "pm.test('429 + Retry-After', () => { pm.response.to.have.status(429); pm.expect(pm.response.json().code).to.eql('TOO_MANY_REQUESTS'); pm.response.to.have.header('Retry-After'); });"
+        ] } }
+      ]
+    }
+  ]
+}

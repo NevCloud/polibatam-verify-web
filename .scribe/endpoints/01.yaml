@@ -1,0 +1,201 @@
+name: Umum
+description: |-
+
+  Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/dasbor/ringkasan
+    metadata:
+      custom: []
+      groupName: Umum
+      groupDescription: |-
+
+        Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ringkasan dasbor'
+      description: 'Admin SILAU: jumlah antrean berkas. Admin Keuangan: jumlah tagihan Menunggu Verifikasi dan yang siap diputuskan (lolos gerbang ganda).'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/notifikasi
+    metadata:
+      custom: []
+      groupName: Umum
+      groupDescription: |-
+
+        Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Daftar notifikasi'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: Halaman.
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: '1–100, bawaan 20.'
+        required: false
+        example: 20
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 1
+      per_page: 20
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/v1/notifikasi/{id}/dibaca'
+    metadata:
+      custom: []
+      groupName: Umum
+      groupDescription: |-
+
+        Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Tandai notifikasi dibaca'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the notifikasi.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/berkas/{id}/tautan'
+    metadata:
+      custom: []
+      groupName: Umum
+      groupDescription: |-
+
+        Dasbor, notifikasi in-app (tanpa push, K-30), dan tautan berkas bertanda tangan (NFR-07, NFR-12).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Tautan berkas bertanda tangan'
+      description: 'Admin SILAU: `id` = versi dokumen pendaftar. Admin Keuangan: `id` = bukti pembayaran. Tautan berlaku 15 menit.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID versi dokumen (SILAU) atau bukti pembayaran (Keuangan).'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null

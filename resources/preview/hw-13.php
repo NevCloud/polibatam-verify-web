@@ -25,6 +25,7 @@ $dasbor = fn (string $status, int $aktif, array $banner, bool $draf = false) => 
     'kartu' => $draf ? ['kolom_terisi' => 8, 'kolom_total' => 9, 'berkas_terunggah' => 2, 'berkas_total' => 3] : ['kolom_terisi' => 9, 'kolom_total' => 9, 'berkas_terunggah' => 3, 'berkas_total' => 3],
     'biodata' => ['nama' => 'Atma Fauzilla', 'nik' => '2171 •••• •••• 0003', 'email' => 'maba.atma@polibatam.ac.id', 'no_hp' => '+62 812-3456-7890'],
     'tautan' => ['formulir' => '#', 'berkas' => '#', 'kartu' => $draf ? null : '#'],
+    'tagihan' => null,
 ];
 $riwayatDasar = [
     ['judul' => 'Draf disimpan', 'waktu' => '4 Okt 2026, 14.20 WIB', 'teks' => 'Nomor pendaftaran PV-2026-001284 dibuat.'],
@@ -46,8 +47,8 @@ return [
         'teks' => 'Lengkapi tahun lulus dan unggah SKHU / Daftar Nilai, lalu ajukan dari tab Tinjau & Ajukan. Draf yang belum diajukan otomatis dibatalkan saat periode ditutup.'], true),
     'diajukan' => $dasbor('Diajukan', 1, ['nada' => 'info', 'judul' => 'Formulir sudah diajukan',
         'teks' => 'Berkas Anda menunggu verifikasi Admin SILAU. Anda akan menerima notifikasi setiap ada perubahan status.']),
-    'masuk_kuota' => $dasbor('Masuk Kuota', 3, ['nada' => 'success', 'judul' => 'Berkas valid dan Anda Masuk Kuota',
-        'teks' => 'Lunasi tagihan formulir paling lambat 12 Oktober 2026 agar pendaftaran tidak dibatalkan (batas 7 hari).']),
+    'masuk_kuota' => array_merge($dasbor('Masuk Kuota', 3, ['nada' => 'success', 'judul' => 'Berkas valid dan Anda Masuk Kuota',
+        'teks' => 'Lunasi tagihan formulir paling lambat 12 Oktober 2026 agar pendaftaran tidak dibatalkan (batas 7 hari).']), ['tagihan' => ['kode' => 'TG-2026-000412', 'jenis' => 'Formulir pendaftaran', 'nominal' => 'Rp 350.284', 'jatuh_tempo' => '7 hari setelah Masuk Kuota', 'status' => 'Belum Bayar', 'bisa_bayar' => true, 'href' => '#']]),
     'kosong' => ['sapaan' => 'Atma', 'notifikasi' => [], 'pendaftaran' => null, 'periodeBuka' => ['nama' => 'Gelombang 2 · 2026', 'tutup' => '30 November 2026']],
     'kosong_tanpa_periode' => ['sapaan' => 'Atma', 'notifikasi' => [], 'pendaftaran' => null, 'periodeBuka' => null],
 

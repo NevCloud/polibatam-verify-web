@@ -17,6 +17,8 @@ use Illuminate\Validation\ValidationException;
  */
 class PilihPeminatan
 {
+    public const PESAN_PESERTA_DIDIK = 'Anda sudah menjadi Peserta Didik yang sedang menjalani program. Pendaftaran baru dapat dibuat setelah program selesai.';
+
     public function __construct(private NomorPendaftaranGenerator $nomor, private AuditLogger $audit) {}
 
     public function __invoke(User $user, int $peminatanPeriodeId): Pendaftaran
@@ -29,6 +31,10 @@ class PilihPeminatan
 
             // Serialkan permintaan dari akun yang sama (dua tab menekan Simpan bersamaan → tetap satu pendaftaran).
             User::whereKey($user->id)->lockForUpdate()->first();
+
+            if ($user->masihPesertaDidik()) {
+                throw ValidationException::withMessages(['peminatan_periode_id' => self::PESAN_PESERTA_DIDIK]);
+            }
 
             $aktif = Pendaftaran::where('user_id', $user->id)->belumAkhir()
                 ->whereHas('peminatanPeriode', fn ($q) => $q->where('periode_pendaftaran_id', $pilihan->periode_pendaftaran_id))

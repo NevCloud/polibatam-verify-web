@@ -1,0 +1,217 @@
+name: Autentikasi
+description: |-
+
+  Login dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/auth/login
+    metadata:
+      custom: []
+      groupName: Autentikasi
+      groupDescription: |-
+
+        Login dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Login (tahap 1)'
+      description: 'Selalu mengembalikan `challenge_token` (2FA wajib untuk admin, K-33). Hanya Admin SILAU & Admin Keuangan; role lain 403.'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Email akun admin.'
+        required: true
+        example: silau@polibatam-verify.test
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Password akun.'
+        required: true
+        example: '|]|{+-'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      nama_perangkat:
+        custom: []
+        name: nama_perangkat
+        description: 'Nama perangkat (satu token per perangkat).'
+        required: true
+        example: 'Pixel 8 Bayu'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: silau@polibatam-verify.test
+      password: '|]|{+-'
+      nama_perangkat: 'Pixel 8 Bayu'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/auth/two-factor
+    metadata:
+      custom: []
+      groupName: Autentikasi
+      groupDescription: |-
+
+        Login dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Verifikasi kode TOTP (tahap 2)'
+      description: 'Mengembalikan token Sanctum yang berlaku 12 jam. Gagal berturut-turut mengunci akun seperti di web (BR-03).'
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      challenge_token:
+        custom: []
+        name: challenge_token
+        description: 'Token dari tahap 1 (berlaku 5 menit).'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      code:
+        custom: []
+        name: code
+        description: 'Kode 6 digit dari aplikasi autentikator. Wajib bila `recovery_code` kosong.'
+        required: false
+        example: '123456'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      recovery_code:
+        custom: []
+        name: recovery_code
+        description: 'Recovery code sekali pakai.'
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      challenge_token: architecto
+      code: '123456'
+      recovery_code: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/auth/logout
+    metadata:
+      custom: []
+      groupName: Autentikasi
+      groupDescription: |-
+
+        Login dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Logout
+      description: 'Mencabut token perangkat ini.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/me
+    metadata:
+      custom: []
+      groupName: Autentikasi
+      groupDescription: |-
+
+        Login dua tahap (FR-60, BR-59, NFR-47): password → `challenge_token` → kode TOTP → token Bearer 12 jam per perangkat.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Profil & role'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null

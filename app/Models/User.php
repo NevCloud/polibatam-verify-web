@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Notifications\Akun\TautanResetPassword;
 use App\Notifications\Akun\VerifikasiEmail;
+use App\States\PesertaDidik\Aktif;
+use App\States\PesertaDidik\BelumAktif;
+use App\States\PesertaDidik\Tertahan;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -88,6 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function pesertaDidiks(): HasMany
     {
         return $this->hasMany(PesertaDidik::class);
+    }
+
+    /** Masih menjalani program (NPD terbit, belum selesai/dibatalkan): tidak boleh membuat pendaftaran baru. */
+    public function masihPesertaDidik(): bool
+    {
+        return $this->pesertaDidiks()->whereIn('status', [
+            BelumAktif::$name, Aktif::$name, Tertahan::$name,
+        ])->exists();
     }
 
     public function sendEmailVerificationNotification(): void
