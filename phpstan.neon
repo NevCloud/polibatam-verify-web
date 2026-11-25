@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # [ASUMSI] level 6 (PRD §5.3 DoD: Larastan level >= 6)
+    level: 6
+    paths:
+        - app
+        - config
+        - routes
+        - database

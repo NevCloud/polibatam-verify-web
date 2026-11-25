@@ -1,0 +1,13 @@
+/* Gaya PDF (dompdf tidak membaca Tailwind/variabel CSS). Nilai = token design-memory §2: primary, ink, muted, line, interactive. */
+@page { margin: 32px 40px; }
+body { font-family: "DejaVu Sans", sans-serif; font-size: 11px; color: #172b4d; }
+.kepala { border-bottom: 2px solid #1e376c; padding-bottom: 10px; margin-bottom: 18px; }
+.merek { font-size: 16px; font-weight: bold; color: #1e376c; }
+.sub { font-size: 10px; color: #64748b; }
+h1 { font-size: 18px; color: #1e376c; margin: 0 0 4px; }
+.nomor { font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #1e376c; background: #eff6ff; border: 1px solid #d4e2f5; padding: 10px 14px; margin: 14px 0 18px; }
+table { width: 100%; border-collapse: collapse; }
+td { padding: 8px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+td.label { width: 38%; color: #64748b; }
+td.nilai { font-weight: bold; }
+.catatan { margin-top: 22px; font-size: 9.5px; color: #64748b; line-height: 1.5; }

@@ -1,0 +1,26 @@
+; =====================================================================
+; Polibatam Verify — Security baseline MySQL (Dok. Keamanan §6)
+; Laragon: Menu > MySQL > my.ini  → tempel di bawah [mysqld], lalu restart
+; Linux  : /etc/mysql/mysql.conf.d/zz-polibatam-verify.cnf
+; =====================================================================
+[mysqld]
+bind-address               = 127.0.0.1          ; BL-06 (produksi: IP privat + firewall)
+local_infile               = OFF                ; BL-11
+secure_file_priv           = "C:/laragon/data/mysql-secure"   ; BL-12 (Linux: /var/lib/mysql-files) — buat foldernya dulu
+skip_name_resolve          = ON                 ; BL-14 (lihat PERINGATAN di README)
+sql_mode                   = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION  ; BL-15
+default_storage_engine     = InnoDB             ; BL-16
+character_set_server       = utf8mb4
+collation_server           = utf8mb4_0900_ai_ci
+default_time_zone          = '+00:00'           ; NFR-30 (UTC)
+log_error_verbosity        = 3                  ; BL-18
+general_log                = OFF                ; BL-19
+log_bin                    = mysql-bin          ; BL-20
+binlog_expire_logs_seconds = 604800             ; BL-20 (7 hari)
+log_bin_trust_function_creators = ON            ; agar pv_migrator dapat CREATE TRIGGER saat binlog aktif
+
+; Produksi, bila server aplikasi & DB terpisah (BL-17):
+; require_secure_transport = ON
+; ssl_ca   = /etc/mysql/ssl/ca.pem
+; ssl_cert = /etc/mysql/ssl/server-cert.pem
+; ssl_key  = /etc/mysql/ssl/server-key.pem

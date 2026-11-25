@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/Support/Ui/*.php';
+
+/*
+ * SATU-SATUNYA tempat token desain (PRD §3.2, AE-17). Sumber: doc/design-memory.md §2–§5.
+ * View memakai kelas utilitas dari token ini, tidak pernah hex langsung.
+ */
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+    /* §2 Brand & interaksi */
+    --color-primary: #1e376c;            /* action/primary */
+    --color-accent: #54c8e8;             /* accent/brand — dekoratif saja, bukan teks kecil di atas putih */
+    --color-interactive: #eff6ff;        /* surface/interactive */
+    --color-nav-active: #edf3fc;         /* navigation/active */
+    --color-link: #226ec9;               /* tautan teks biru (Figma: Layar/Kartu galat, "Ke Halaman Utama") */
+
+    /* §2 Netral & permukaan */
+    --color-ink: #172b4d;                /* text/primary */
+    --color-muted: #64748b;              /* text/secondary */
+    --color-canvas: #f7f9fc;             /* background/canvas */
+    --color-surface: #ffffff;            /* surface/default */
+    --color-line: #e2e8f0;               /* border/default */
+    --color-control: #94a3b8;            /* border/control */
+    --color-line-strong: #b8c9dd;        /* border/strong */
+    --color-line-accent: #d4e2f5;        /* border/accent */
+    --color-document: #e4f3fa;           /* surface/document */
+
+    /* §2 Status & feedback */
+    --color-success: #15803d;
+    --color-success-surface: #eafbef;
+    --color-warning: #92400e;
+    --color-warning-surface: #fff5e5;
+    --color-error: #dc2626;
+    --color-error-surface: #fef2f2;
+    --color-error-line: #fecaca;
+    --color-neutral: #64748b;            /* [OBSERVASI] design-memory §2 */
+    --color-neutral-surface: #f1f5f9;    /* [OBSERVASI] design-memory §2 */
+    --color-info: #1e376c;               /* [OBSERVASI] */
+    --color-info-surface: #eff6ff;       /* [OBSERVASI] */
+
+    /* §3 Tipografi (line-height 150%) */
+    --text-kode: 60px;                   /* angka kode galat (Figma: Layar/Kartu galat) */
+    --text-kode--line-height: 60px;
+    --text-hero: 38px;                   /* judul panel branding autentikasi (Figma HW-05/07/08) */
+    --text-hero--line-height: 47.5px;
+    --text-display: 28px;
+    --text-display--line-height: 42px;
+    --text-heading: 24px;
+    --text-heading--line-height: 36px;
+    --text-greeting: 22px;
+    --text-greeting--line-height: 33px;
+    --text-title: 20px;
+    --text-title--line-height: 30px;
+    --text-subheading: 18px;
+    --text-subheading--line-height: 27px;
+    --text-body: 16px;
+    --text-body--line-height: 24px;
+    --text-body-sm: 14px;
+    --text-body-sm--line-height: 21px;
+    --text-compact: 13px;
+    --text-compact--line-height: 19.5px;
+    --text-caption: 12px;
+    --text-caption--line-height: 18px;
+    --text-meta: 11px;
+    --text-meta--line-height: 16.5px;
+
+    /* §4 Radius */
+    --radius-badge: 6px;
+    --radius-control: 8px;
+    --radius-menu: 10px;                 /* item menu sidebar & tombol Logout (Figma) */
+    --radius-card: 12px;
+    --radius-sheet: 16px;
+    --radius-auth: 20px;                 /* kartu formulir autentikasi (Figma HW-05/07/08/09) */
+    --radius-panel: 28px;                /* panel branding autentikasi */
+
+    /* §4–§5 Dimensi */
+    --spacing-control: 48px;             /* tinggi tombol & kolom pencarian */
+    --spacing-header: 72px;              /* tinggi header landing & portal (keputusan final §8) */
+    --spacing-sidebar: 232px;            /* Figma Layar/Sidebar (design-memory: 240–260px) */
+}
+
+@layer base {
+    body {
+        @apply bg-canvas font-sans text-body text-ink antialiased;
+    }
+}
+
+[x-cloak] { display: none !important; }

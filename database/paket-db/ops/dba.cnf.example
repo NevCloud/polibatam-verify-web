@@ -1,0 +1,10 @@
+; Salin ke C:\laragon\etc\pv\dba.cnf (Linux: /etc/polibatam-verify/dba.cnf, chmod 600)
+; Hak baca hanya untuk akun Windows pengembang. JANGAN masuk repositori.
+; Password WAJIB diberi tanda kutip: karakter # atau ; tanpa kutip
+; dianggap komentar → login gagal → akun terkunci setelah 5 kali.
+[client]
+user     = pv_dba
+password = "********"
+host     = 127.0.0.1
+protocol = TCP
+

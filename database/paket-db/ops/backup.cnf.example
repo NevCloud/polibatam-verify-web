@@ -1,0 +1,9 @@
+; Salin ke C:\laragon\etc\pv\backup.cnf (Linux: /etc/polibatam-verify/backup.cnf, chmod 600)
+; Hak baca hanya untuk akun Windows pengembang. JANGAN masuk repositori.
+; Password WAJIB diberi tanda kutip: karakter # atau ; tanpa kutip
+; dianggap komentar → login gagal → akun terkunci setelah 5 kali.
+[mysqldump]
+user     = pv_backup
+password = "********"
+host     = 127.0.0.1
+protocol = TCP
