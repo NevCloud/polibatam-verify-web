@@ -11,18 +11,26 @@ use App\Http\Controllers\Web\Peserta\DasborController;
 use App\Http\Controllers\Web\Peserta\NotifikasiController;
 use App\Http\Controllers\Web\Peserta\PendaftaranController;
 use App\Http\Controllers\Web\Peserta\TagihanController as PesertaTagihanController;
+use App\Http\Controllers\Web\Publik\PublikController;
 use App\Http\Controllers\Web\Silau\VerifikasiBerkasController;
 use App\Http\Controllers\Web\SuperAdmin\AkunController;
+use App\Http\Controllers\Web\SuperAdmin\CmsController;
 use App\Http\Controllers\Web\SuperAdmin\TagihanController as SuperAdminTagihanController;
+use App\Http\Controllers\Web\Track\KuotaController;
+use App\Http\Controllers\Web\Track\PeminatanController;
+use App\Http\Controllers\Web\Track\TarifController;
+use App\Http\Controllers\Web\Track\TrackController;
 use App\Models\Dokumen;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 // Rute registrasi, login, logout, verifikasi email, dan reset password disediakan Fortify (config/fortify.php).
 
-Route::get('/', function () {
-    return view('welcome'); // STUB-FE(P08): HW-01 beranda
-});
+// HW-01–04: halaman publik tanpa login (FR-08, FR-09)
+Route::get('/', [PublikController::class, 'beranda'])->name('beranda');
+Route::get('/katalog', [PublikController::class, 'katalog'])->name('katalog');
+Route::get('/katalog/{kode}', [PublikController::class, 'peminatan'])->where('kode', '[A-Za-z0-9-]+')->name('katalog.show');
+Route::view('/kebijakan-privasi', 'publik.kebijakan-privasi')->name('kebijakan-privasi');
 
 // HW-08 dan HW-11: admin yang sudah lolos password tetapi belum punya sesi (BR-59).
 Route::middleware('guest')->group(function () {
@@ -119,6 +127,41 @@ Route::middleware('auth')->group(function () {
             Route::post('/tanpa-jatuh-tempo', [SuperAdminTagihanController::class, 'tetapkanJatuhTempo'])->name('tanpa-jatuh-tempo.simpan');
             Route::get('/{tagihan}', [SuperAdminTagihanController::class, 'show'])->where('tagihan', '[A-Z0-9-]+')->name('show');
             Route::post('/{tagihan}/koreksi', [SuperAdminTagihanController::class, 'koreksi'])->where('tagihan', '[A-Z0-9-]+')->name('koreksi');
+        });
+
+        // HW-33–37: data master, tarif berversi, kuota minimum (P07; RBAC SRS: Track & peminatan, Tarif, Kuota, Dasbor kuota)
+        Route::middleware('role:admin_track|super_admin')->group(function () {
+            Route::get('/track', [TrackController::class, 'index'])->name('track.index');
+            Route::post('/track', [TrackController::class, 'store'])->name('track.store');
+            Route::put('/track/{track}', [TrackController::class, 'update'])->whereNumber('track')->name('track.update');
+            Route::put('/track/{track}/status', [TrackController::class, 'status'])->whereNumber('track')->name('track.status');
+            Route::delete('/track/{track}', [TrackController::class, 'destroy'])->whereNumber('track')->name('track.destroy');
+
+            Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan.index');
+            Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
+            Route::put('/peminatan/{peminatan}', [PeminatanController::class, 'update'])->whereNumber('peminatan')->name('peminatan.update');
+            Route::put('/peminatan/{peminatan}/status', [PeminatanController::class, 'status'])->whereNumber('peminatan')->name('peminatan.status');
+            Route::delete('/peminatan/{peminatan}', [PeminatanController::class, 'destroy'])->whereNumber('peminatan')->name('peminatan.destroy');
+
+            Route::post('/peminatan/{peminatan:kode}/tarif', [TarifController::class, 'store'])->where('peminatan', '[A-Z0-9-]+')->name('tarif.store');
+            Route::post('/kuota', [KuotaController::class, 'simpan'])->name('kuota.simpan');
+            Route::delete('/kuota/{peminatanPeriode}', [KuotaController::class, 'lepas'])->whereNumber('peminatanPeriode')->name('kuota.lepas');
+        });
+        Route::middleware('role:admin_track|admin_keuangan|super_admin')->group(function () {
+            Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
+            Route::get('/peminatan/{peminatan:kode}/tarif', [TarifController::class, 'show'])->where('peminatan', '[A-Z0-9-]+')->name('tarif.show');
+        });
+        Route::middleware('role:admin_track|admin_silau|super_admin')->group(function () {
+            Route::get('/kuota', [KuotaController::class, 'index'])->name('kuota.index');
+            Route::get('/kuota/dasbor', [KuotaController::class, 'dasbor'])->name('kuota.dasbor');
+        });
+
+        // HW-46: CMS landing page (Super Admin saja; FR-10, BR-55)
+        Route::middleware('role:super_admin')->prefix('cms')->name('cms.')->group(function () {
+            Route::get('/', [CmsController::class, 'index'])->name('index');
+            Route::post('/', [CmsController::class, 'simpan'])->name('simpan');
+            Route::post('/terbitkan', [CmsController::class, 'terbitkan'])->name('terbitkan');
+            Route::get('/pratinjau', [CmsController::class, 'pratinjau'])->name('pratinjau');
         });
 
         // HW-44: akun & role admin (Super Admin saja)

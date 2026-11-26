@@ -15,8 +15,8 @@ Status: `Rencana` → `Dikerjakan` → `Menunggu Uji` → `Perbaikan` → `Diset
 | P04 | Verifikasi berkas & kuota | Disetujui | Antrean (urut pengajuan, filter, cari NIK via hash, "Revisi masuk"), detail + document viewer, keputusan per dokumen dengan checklist (A-64) dalam satu form, Selesaikan → Perlu Revisi / Masuk Kuota (K-42, tanpa kuota maksimum), 409 optimistic locking + dialog, `pendaftaran:batalkan-kedaluwarsa` & `periode:tutup` (idempoten, terjadwal), skema 01c (hapus kuota maks) |
 | P05 | Tagihan & pembayaran | Disetujui | Tagihan formulir otomatis saat diajukan (kode referensi TG-{TAHUN}-{6 digit}, kode unik, snapshot tarif & rekening), unggah bukti + data pengiriman (hash unik, selisih = peringatan), verifikasi Lunas/Tolak (gerbang Masuk Kuota, alasan baku, 409), NPD atomik + tagihan Semester 1, koreksi Lunas (SA), tanpa jatuh tempo (HW-42 + perintah harian 07.00 WIB), rekening institusi, rekap + ekspor Excel/PDF (sinkron), skema 01d |
 | P06 | REST API v1 | Menunggu Uji | 16 endpoint `/api/v1` (Arsitektur §6.4): login dua tahap (password → `challenge_token` → TOTP → token Sanctum per perangkat 12 jam), logout, `/me`, dasbor, notifikasi, tautan berkas bertanda tangan 15 menit, verifikasi berkas (antrean, detail, keputusan per dokumen, selesai) & pembayaran (antrean + `siap=1` Fast Verify, detail, lunas, tolak). Hanya Admin SILAU/Keuangan, role silang 403, 409 `SUDAH_DIVERIFIKASI`, 429 login, kanal audit `mobile`. Scribe → `postman/` (HTML, collection, OpenAPI) + koleksi Newman `postman/uji-p06.postman_collection.json` |
-| P07 | Data master, tarif, kuota | Rencana |  |
-| P08 | Publik & CMS | Rencana |  |
+| P07 | Data master, tarif, kuota | Menunggu Uji | CRUD track & peminatan (kode unik, durasi ≥ 1, aktif/nonaktif, hapus hanya bila belum dipakai — GRANT DELETE baru pada tracks/peminatans/peminatan_periodes), tarif berversi (hanya nominal yang berubah jadi versi baru, tanggal efektif ≥ hari ini, versi lama tidak bisa diubah), kuota minimum per periode (K-42 tanpa maksimum; setelah periode dimulai hanya Super Admin + alasan), dasbor kuota (Diajukan/Masuk Kuota/NPD Terbit, penanda H-7). Keuangan baca tarif, SILAU baca kuota |
+| P08 | Publik & CMS | Menunggu Uji | Beranda (jadwal/pengumuman/alur/FAQ/kontak dari CMS, track & periode dari data master), katalog & detail peminatan (tarif berlaku, tanpa kuota K-42, tombol daftar nonaktif + periode berikutnya), kebijakan privasi, CMS Super Admin (draf → pratinjau → terbitkan, teks polos, audit). Header publik + menu ponsel, header portal 360 px (T-19). p95 katalog lokal 0,77 s tanpa cache |
 | P09 | Refund & pembatalan peminatan | Rencana |  |
 | P10 | Periode & rollover | Rencana |  |
 | P11 | Data pendaftaran, ekspor & arsip | Rencana |  |
@@ -30,10 +30,10 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 
 | ID | Rute | View | Paket | FE | Data | Uji | Catatan |
 |---|---|---|---|---|---|---|---|
-| HW-01 | `/` | `publik/beranda` | P08 | Belum | — | — | Beranda |
-| HW-02 | `/katalog` | `publik/katalog` | P08 | Belum | — | — | Katalog peminatan |
-| HW-03 | `/katalog/{kode}` | `publik/peminatan` | P08 | Belum | — | — | Detail peminatan |
-| HW-04 | `/kebijakan-privasi` | `publik/kebijakan-privasi` | P08 | Belum | — | — | Kebijakan privasi |
+| HW-01 | `/` | `publik/beranda` | P08 | Selesai | Terhubung | Menunggu Uji | Beranda |
+| HW-02 | `/katalog` | `publik/katalog` | P08 | Selesai | Terhubung | Menunggu Uji | Katalog peminatan |
+| HW-03 | `/katalog/{kode}` | `publik/peminatan` | P08 | Selesai | Terhubung | Menunggu Uji | Detail peminatan |
+| HW-04 | `/kebijakan-privasi` | `publik/kebijakan-privasi` | P08 | Selesai | Terhubung | Menunggu Uji | Kebijakan privasi |
 | HW-05 | `/register` | `auth/register` | P02 | Selesai | Terhubung | Disetujui | Registrasi (+ persetujuan kebijakan privasi dicatat bersama waktu) |
 | HW-06 | `/email/verify` | `auth/verify-email` | P02 | Selesai | Terhubung | Disetujui | Verifikasi email |
 | HW-07 | `/login` | `auth/login` | P02 | Selesai | Terhubung | Disetujui | Login (satu untuk semua role) |
@@ -62,11 +62,11 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 | HW-30 | `/admin/refund` | `admin/keuangan/refund/index` | P09 | Belum | — | — | Daftar refund (Admin Keuangan) |
 | HW-31 | `/admin/refund/{id}` | `admin/keuangan/refund/show` | P09 | Belum | — | — | Proses refund (pencocokan mutasi, rekening lengkap, bukti transfer) |
 | HW-32 | `/admin/rekap` | `admin/keuangan/rekap/index` | P05 | Selesai | Terhubung | Disetujui | Rekap & ekspor keuangan |
-| HW-33 | `/admin/track` | `admin/track/track/index` | P07 | Belum | — | — | Track |
-| HW-34 | `/admin/peminatan` | `admin/track/peminatan/index` | P07 | Belum | — | — | Peminatan |
-| HW-35 | `/admin/peminatan/{kode}/tarif` | `admin/track/peminatan/tarif` | P07 | Belum | — | — | Tarif peminatan (berversi) |
-| HW-36 | `/admin/kuota` | `admin/track/kuota/index` | P07 | Belum | — | — | Kuota per periode |
-| HW-37 | `/admin/kuota/dasbor` | `admin/track/kuota/dasbor` | P07 | Belum | — | — | Dasbor kuota |
+| HW-33 | `/admin/track` | `admin/track/track/index` | P07 | Selesai | Terhubung | Menunggu Uji | Track (tanpa kolom deskripsi Figma) |
+| HW-34 | `/admin/peminatan` | `admin/track/peminatan/index` | P07 | Selesai | Terhubung | Menunggu Uji | Peminatan (kuota dipindah ke HW-36) |
+| HW-35 | `/admin/tarif`, `/admin/peminatan/{kode}/tarif` | `admin/track/tarif/{index,show}` | P07 | Selesai | Terhubung | Menunggu Uji | Ringkasan tarif berlaku + tarif berversi per peminatan & riwayat |
+| HW-36 | `/admin/kuota` | `admin/track/kuota/index` | P07 | Selesai | Terhubung | Menunggu Uji | Kuota minimum per periode (K-42) |
+| HW-37 | `/admin/kuota/dasbor` | `admin/track/kuota/dasbor` | P07 | Selesai | Terhubung | Menunggu Uji | Dasbor kuota |
 | HW-38 | `/admin/periode-pendaftaran` | `admin/superadmin/periode-pendaftaran/index` | P10 | Belum | — | — | Periode pendaftaran |
 | HW-39 | `/admin/periode-akademik` | `admin/superadmin/periode-akademik/index` | P10 | Belum | — | — | Periode akademik |
 | HW-40 | `/admin/rollover` | `admin/superadmin/rollover/index` | P10 | Belum | — | — | Rollover semester (pratinjau → konfirmasi → status) |
@@ -75,7 +75,7 @@ FE: `Belum` → `Selesai`. Data: `Stub` → `Terhubung`.
 | HW-43 | `/admin/tagihan`, `/admin/tagihan/{kode_referensi}` | `admin/superadmin/tagihan/{index,show}` | P05 | Selesai | Terhubung | Disetujui | Cari & koreksi tagihan |
 | HW-44 | `/admin/akun` | `admin/superadmin/akun/index` | P02 | Selesai | Terhubung | Disetujui | Akun & role admin (Super Admin) |
 | HW-45 | `/admin/audit-log` | `admin/superadmin/audit-log/index` | P12 | Belum | — | — | Audit log (hanya baca) |
-| HW-46 | `/admin/cms` | `admin/superadmin/cms/index` | P08 | Belum | — | — | CMS landing page (Super Admin) |
+| HW-46 | `/admin/cms` | `admin/superadmin/cms/index` | P08 | Selesai | Terhubung | Menunggu Uji | CMS landing page (Super Admin) |
 | HW-47 | `/admin/pengaturan` | `admin/superadmin/pengaturan/index` | P12 | Belum | — | — | Pengaturan sistem (parameter NFR-40) |
 | HW-48 | `/admin/kriteria-checklist` | `admin/superadmin/kriteria-checklist/index` | P12 | Belum | — | — | Kriteria checklist dokumen |
 | HW-49 | — (halaman galat) | `errors/403` | P00 | Selesai | Terhubung | Menunggu | 403 Tidak berhak; preview `/_preview/hw-49` |

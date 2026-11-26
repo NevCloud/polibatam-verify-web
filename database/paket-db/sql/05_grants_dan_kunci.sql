@@ -23,12 +23,12 @@ REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'pv_report'@'127.0.0.1';
 -- pv_app
 -- ---------------------------------------------------------------------
 
--- A. Tabel domain baca-tulis, tanpa DELETE (17 tabel)
+-- A. Tabel domain baca-tulis, tanpa DELETE (17 tabel; tracks, peminatans, peminatan_periodes boleh DELETE sejak P07 — keputusan pemilik proyek 26-11-2026)
 GRANT SELECT, INSERT, UPDATE ON polibatam_verify.users                TO 'pv_app'@'127.0.0.1';
-GRANT SELECT, INSERT, UPDATE ON polibatam_verify.tracks               TO 'pv_app'@'127.0.0.1';
-GRANT SELECT, INSERT, UPDATE ON polibatam_verify.peminatans           TO 'pv_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE, DELETE ON polibatam_verify.tracks       TO 'pv_app'@'127.0.0.1';  -- P07: DELETE hanya bila belum pernah dipakai (BR-53), dijaga di Action + FK RESTRICT
+GRANT SELECT, INSERT, UPDATE, DELETE ON polibatam_verify.peminatans   TO 'pv_app'@'127.0.0.1';  -- P07: idem (BR-53)
 GRANT SELECT, INSERT, UPDATE ON polibatam_verify.periode_pendaftarans TO 'pv_app'@'127.0.0.1';
-GRANT SELECT, INSERT, UPDATE ON polibatam_verify.peminatan_periodes   TO 'pv_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE, DELETE ON polibatam_verify.peminatan_periodes TO 'pv_app'@'127.0.0.1';  -- P07: hapus kuota periode yang belum dipakai pendaftaran
 GRANT SELECT, INSERT, UPDATE ON polibatam_verify.pendaftarans         TO 'pv_app'@'127.0.0.1';
 GRANT SELECT, INSERT, UPDATE ON polibatam_verify.dokumens             TO 'pv_app'@'127.0.0.1';
 GRANT SELECT, INSERT, UPDATE ON polibatam_verify.peserta_didiks       TO 'pv_app'@'127.0.0.1';

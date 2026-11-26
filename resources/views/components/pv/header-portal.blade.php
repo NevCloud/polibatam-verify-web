@@ -5,22 +5,21 @@
     <div class="flex h-full items-center justify-between gap-4 px-5 lg:px-12">
         <x-pv.logo />
         <nav class="hidden items-center gap-6 text-compact font-medium text-muted xl:flex" aria-label="Tautan website">
-            {{-- STUB-FE(P08): rute halaman publik --}}
-            @foreach (['Beranda', 'Program', 'FAQ', 'Kontak'] as $item)
-                <a href="#" class="hover:text-ink">{{ $item }}</a>
+            @foreach (['Beranda' => route('beranda'), 'Program' => route('katalog'), 'FAQ' => route('beranda').'#faq', 'Kontak' => route('beranda').'#kontak'] as $item => $href)
+                <a href="{{ $href }}" class="hover:text-ink">{{ $item }}</a>
             @endforeach
         </nav>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 sm:gap-4">
             {{-- Lonceng = menu Notifikasi peran ini (HW-20 peserta; admin STUB-FE(P12)) --}}
             <a href="{{ collect($portal->menu)->firstWhere('label', 'Notifikasi')['href'] ?? '#' }}" aria-label="Notifikasi" class="shrink-0"><img src="{{ asset('images/notifikasi.svg') }}" alt="" width="42" height="42" class="size-[42px]"></a>
-            <span class="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-compact font-bold text-white" aria-hidden="true">{{ $portal->inisial }}</span>
+            <span class="hidden size-10 shrink-0 place-items-center rounded-full bg-primary sm:grid text-compact font-bold text-white" aria-hidden="true">{{ $portal->inisial }}</span>
             <div class="hidden flex-col items-start gap-[3px] sm:flex">
                 <p class="text-compact font-bold text-ink">{{ $portal->nama }}</p>
                 <x-pv.chip :nada="$portal->nadaPeran">{{ $portal->peran }}</x-pv.chip>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="h-[46px] w-[92px] shrink-0 rounded-menu border border-primary bg-surface text-body-sm font-bold text-primary hover:bg-interactive">Logout</button>
+                <button type="submit" class="h-[46px] shrink-0 rounded-menu px-3 sm:w-[92px] sm:px-0 border border-primary bg-surface text-body-sm font-bold text-primary hover:bg-interactive">Logout</button>
             </form>
         </div>
     </div>

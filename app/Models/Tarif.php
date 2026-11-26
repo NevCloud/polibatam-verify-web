@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -26,5 +27,11 @@ class Tarif extends Model
     protected function casts(): array
     {
         return ['tanggal_efektif' => 'date', 'nominal' => 'integer'];
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function pembuat(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dibuat_oleh');
     }
 }

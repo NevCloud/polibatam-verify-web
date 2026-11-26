@@ -46,8 +46,7 @@
                     <label class="flex items-start gap-2.5 text-caption leading-[1.6] text-muted">
                         <input type="checkbox" name="persetujuan_privasi" value="1" @checked(old('persetujuan_privasi')) required
                                class="mt-0.5 size-[18px] shrink-0 rounded accent-primary">
-                        {{-- STUB-FE(P08): HW-04 kebijakan privasi --}}
-                        <span>Saya menyetujui <a href="{{ url('/kebijakan-privasi') }}" class="font-bold text-link hover:underline" target="_blank">Kebijakan Privasi</a> Polibatam Verify.</span>
+                        <span>Saya menyetujui <a href="{{ route('kebijakan-privasi') }}" class="font-bold text-link hover:underline" target="_blank">Kebijakan Privasi</a> Polibatam Verify.</span>
                     </label>
                     @error('persetujuan_privasi')<p class="text-caption text-error">{{ $message }}</p>@enderror
                 </div>

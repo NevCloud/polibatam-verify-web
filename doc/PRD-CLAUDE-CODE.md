@@ -536,9 +536,9 @@ Endpoint mengikuti `arsitektur-teknologi.md` §6.4: `POST /auth/login` (selalu m
 | HW-36 | Kuota per periode | `/admin/kuota` | `admin/track/kuota/index` |
 | HW-37 | Dasbor kuota | `/admin/kuota/dasbor` | `admin/track/kuota/dasbor` |
 
-**Actions:** `SimpanVersiTarif` (versi baru + tanggal efektif; versi lama tidak boleh diubah/dihapus), `AturKuota` (0 ≤ min ≤ maks; maks boleh naik dengan alasan dan tidak boleh di bawah slot terpakai; **min hanya Super Admin**); kenaikan kuota memicu `KuotaBertambah` → `PromosikanDaftarTunggu`.
-**Poin kerja:** hapus hanya bila belum pernah dipakai, selain itu nonaktifkan (BR-53); Admin Keuangan hanya membaca tarif; Admin SILAU hanya membaca kuota; peringatan dasbor bila ≤ 7 hari sebelum periode ditutup NPD Terbit masih di bawah kuota minimum.
-**Uji wajib:** tarif lama tidak berubah; tarif ≤ 0 ditolak; kuota maks tidak bisa diturunkan di bawah slot terpakai; Admin Track tidak bisa mengubah kuota minimum.
+**Actions:** `SimpanVersiTarif` (versi baru + tanggal efektif; versi lama tidak boleh diubah/dihapus), `AturKuota` (kuota minimum ≥ 0, **tanpa kuota maksimum** (K-42); sebelum periode dimulai Admin Track/Super Admin, sesudahnya **hanya Super Admin dengan alasan**, BR-20).
+**Poin kerja:** hapus hanya bila belum pernah dipakai, selain itu nonaktifkan (BR-53; GRANT DELETE pada tracks/peminatans/peminatan_periodes, A-93); Admin Keuangan hanya membaca tarif; Admin SILAU hanya membaca kuota; peringatan dasbor bila ≤ 7 hari sebelum periode ditutup NPD Terbit masih di bawah kuota minimum.
+**Uji wajib:** tarif lama tidak berubah; tarif ≤ 0 ditolak; Admin Track tidak bisa mengubah kuota minimum setelah periode dimulai.
 
 ---
 

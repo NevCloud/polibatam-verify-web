@@ -27,7 +27,8 @@ final class PortalContext
         ],
         'Admin Keuangan' => [
             'eyebrow' => 'PORTAL KEUANGAN',
-            'menu' => [['Dashboard', 'home'], ['Verifikasi Pembayaran', 'card'], ['Refund', 'refund'], ['Rekap & Ekspor', 'report'], ['Rekening Institusi', 'bank'], ['Data Pendaftaran', 'file'], ['Notifikasi', 'bell'], ['Profil', 'user']],
+            // + Tarif Peminatan: RBAC SRS "Tarif berversi" R untuk Keuangan (P07, T-28); tidak ada di Figma.
+            'menu' => [['Dashboard', 'home'], ['Verifikasi Pembayaran', 'card'], ['Refund', 'refund'], ['Rekap & Ekspor', 'report'], ['Rekening Institusi', 'bank'], ['Tarif Peminatan', 'coins'], ['Data Pendaftaran', 'file'], ['Notifikasi', 'bell'], ['Profil', 'user']],
             'bantuan' => ['judul' => 'Panduan keuangan', 'teks' => 'Cocokkan bukti dengan mutasi rekening sebelum menandai Lunas.', 'tautan' => 'Buka panduan →'],
         ],
         'Admin Track' => [
@@ -38,7 +39,8 @@ final class PortalContext
         'Super Admin' => [
             'eyebrow' => 'PORTAL SUPER ADMIN',
             // Figma + Data Pendaftaran, Arsip Periode, Notifikasi, Profil (keputusan pemilik 25-11-2026, T-14; BR-67, FR-66).
-            'menu' => [['Dashboard', 'home'], ['Data Pendaftaran', 'file'], ['Arsip Periode', 'archive'], ['Kelola User', 'users'], ['Periode', 'calendar'], ['Rollover', 'refresh'], ['Evaluasi Kuota', 'alert'], ['Tagihan', 'card'], ['Audit Log', 'history'], ['CMS Landing Page', 'layout'], ['Kriteria Checklist', 'listcheck'], ['Pengaturan Sistem', 'settings'], ['Notifikasi', 'bell'], ['Profil', 'user']],
+            // + Kuota per Periode: hanya Super Admin yang dapat mengubah kuota minimum setelah periode dimulai (BR-20, P07, T-28).
+            'menu' => [['Dashboard', 'home'], ['Data Pendaftaran', 'file'], ['Arsip Periode', 'archive'], ['Kelola User', 'users'], ['Periode', 'calendar'], ['Kuota per Periode', 'chart'], ['Rollover', 'refresh'], ['Evaluasi Kuota', 'alert'], ['Tagihan', 'card'], ['Audit Log', 'history'], ['CMS Landing Page', 'layout'], ['Kriteria Checklist', 'listcheck'], ['Pengaturan Sistem', 'settings'], ['Notifikasi', 'bell'], ['Profil', 'user']],
             'bantuan' => ['judul' => 'Panduan super admin', 'teks' => 'Pantau peringatan sistem, kelola akun, dan periksa audit log.', 'tautan' => 'Buka panduan →'],
         ],
     ];
@@ -101,11 +103,17 @@ final class PortalContext
             'Dashboard' => $admin ? 'admin.dasbor' : 'dasbor',
             'Profil' => 'akun.profil',
             'Kelola User' => 'admin.akun.index',
+            'CMS Landing Page' => 'admin.cms.index',
             'Verifikasi Berkas' => 'admin.verifikasi-berkas.index',
             'Verifikasi Pembayaran' => 'admin.verifikasi-pembayaran.index',
             'Rekap & Ekspor' => 'admin.rekap',
             'Rekening Institusi' => 'admin.rekening.index',
             'Tagihan' => $admin ? 'admin.tagihan.index' : 'tagihan.index',
+            'Track' => 'admin.track.index',
+            'Peminatan' => 'admin.peminatan.index',
+            'Tarif Peminatan' => 'admin.tarif.index',
+            'Kuota per Periode' => 'admin.kuota.index',
+            'Dasbor Kuota' => 'admin.kuota.dasbor',
             'Formulir' => 'pendaftaran.saya',
             'Status' => 'status',
             'Notifikasi' => $admin ? null : 'notifikasi', // STUB-FE(P12): notifikasi admin

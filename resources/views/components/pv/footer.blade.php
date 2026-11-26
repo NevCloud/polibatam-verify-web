@@ -15,16 +15,15 @@
             <div>
                 <p class="text-body-sm font-semibold">Jelajahi</p>
                 <ul class="mt-3 space-y-2 text-body-sm text-muted">
-                    {{-- STUB-FE(P08): rute halaman publik --}}
-                    @foreach (['Beranda', 'Program', 'FAQ', 'Kontak'] as $item)
-                        <li><a href="#" class="hover:text-ink">{{ $item }}</a></li>
+                    @foreach (['Beranda' => route('beranda'), 'Program' => route('katalog'), 'FAQ' => route('beranda').'#faq', 'Kontak' => route('beranda').'#kontak', 'Kebijakan privasi' => route('kebijakan-privasi')] as $item => $href)
+                        <li><a href="{{ $href }}" class="hover:text-ink">{{ $item }}</a></li>
                     @endforeach
                 </ul>
             </div>
             <div>
                 <p class="text-body-sm font-semibold">Quick Support</p>
                 <p class="mt-3 text-body-sm text-muted">Ada kendala saat mendaftar? Tim kami siap membantu.</p>
-                <x-pv.button variant="secondary" href="#" class="mt-3">Hubungi tim dukungan</x-pv.button>
+                <x-pv.button variant="secondary" :href="route('beranda').'#kontak'" class="mt-3">Hubungi tim dukungan</x-pv.button>
             </div>
         </div>
         <div class="border-t border-line px-5 py-4 text-center text-caption text-muted">© {{ now()->year }} Polibatam Verify. Hak cipta dilindungi.</div>

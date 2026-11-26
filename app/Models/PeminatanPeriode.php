@@ -25,6 +25,12 @@ class PeminatanPeriode extends Model
     /** @var list<string> */
     protected $guarded = ['id'];
 
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return ['kuota_min' => 'integer'];
+    }
+
     /** @return BelongsTo<PeriodePendaftaran, $this> */
     public function periode(): BelongsTo
     {
